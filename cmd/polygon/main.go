@@ -1,4 +1,4 @@
-package main
+package polygon
 
 import (
 	"encoding/json"
@@ -36,7 +36,7 @@ type ErrorResponse struct {
 	Error   string `json:"error"`
 }
 
-func main() {
+func Polygon() int {
 	votingPowers := make([]int64, 0, 200)
 
 	url := fmt.Sprintf("https://heimdall.api.matic.network/staking/validator-set")
@@ -75,4 +75,6 @@ func main() {
 	// // now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for 0xPolygon is", nakamotoCoefficient)
+
+	return nakamotoCoefficient
 }

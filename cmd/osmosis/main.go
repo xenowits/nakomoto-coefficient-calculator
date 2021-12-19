@@ -1,4 +1,4 @@
-package main
+package osmosis
 
 import (
 	"encoding/json"
@@ -36,7 +36,7 @@ type ErrorResponse struct {
 	Error   string `json:"error"`
 }
 
-func main() {
+func Osmosis() int {
 	votingPowers := make([]int64, 0, 200)
 
 	url := fmt.Sprintf("https://lcd-osmosis.keplr.app/staking/validators")
@@ -76,4 +76,6 @@ func main() {
 	// // now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for osmosiszone is", nakamotoCoefficient)
+
+	return nakamotoCoefficient
 }

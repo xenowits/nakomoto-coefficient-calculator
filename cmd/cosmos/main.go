@@ -1,4 +1,4 @@
-package main
+package cosmos
 
 import (
 	"encoding/json"
@@ -42,7 +42,7 @@ type ErrorResponse struct {
 	Error   string `json:"error"`
 }
 
-func main() {
+func Cosmos() int {
 	votingPowers := make([]int64, 0, 200)
 	pageNo, entriesPerPage := 1, 50
 	url := ""
@@ -91,4 +91,6 @@ func main() {
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for cosmos is", nakamotoCoefficient)
+
+	return nakamotoCoefficient
 }
