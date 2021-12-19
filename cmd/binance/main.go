@@ -3,33 +3,33 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 )
 
 type Request struct {
-	height int
-	page int
+	height   int
+	page     int
 	per_page int
 }
 
 type Response struct {
-	total int `json:"total"`
+	Total      int `json:"total"`
 	Validators []struct {
-		Validator string `json:"validator"`
-		ValName string `json:"valName"`
-		Proposer_priority string `json:"proposer_priority"`
-		VotingPower float64 `json:"votingPower"`
+		Validator             string  `json:"validator"`
+		ValName               string  `json:"valName"`
+		Proposer_priority     string  `json:"proposer_priority"`
+		VotingPower           float64 `json:"votingPower"`
 		VotingPowerProportion float64 `json:"votingPowerProportion"`
 	} `json:"validators"`
 }
 
 type ErrorResponse struct {
-	Id int `json:"id"`
+	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
-	Error string `json:"error"`
+	Error   string `json:"error"`
 }
 
 func main() {
@@ -37,7 +37,7 @@ func main() {
 	pageLimit, pageOffset := 50, 0
 	url := ""
 	for true {
-		url = fmt.Sprintf("https://api.binance.org/v1/staking/chains/bsc/validators?limit=%d&offset=%d", pageLimit, pageOffset);
+		url = fmt.Sprintf("https://api.binance.org/v1/staking/chains/bsc/validators?limit=%d&offset=%d", pageLimit, pageOffset)
 		resp, err := http.Get(url)
 		if err != nil {
 			errBody, _ := ioutil.ReadAll(resp.Body)
@@ -47,10 +47,10 @@ func main() {
 			log.Fatalln(err)
 		}
 		defer resp.Body.Close()
-	
+
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-		   log.Fatalln(err)
+			log.Fatalln(err)
 		}
 
 		var response Response
@@ -61,7 +61,7 @@ func main() {
 
 		// break if no more entries left
 		if len(response.Validators) == 0 {
-			break;
+			break
 		}
 
 		// loop through the validators voting power proportions
@@ -75,7 +75,7 @@ func main() {
 
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := calcNakamotoCoefficient(votingPowers)
-	fmt.Println("The Nakamoto coefficient is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for binance chain is", nakamotoCoefficient)
 }
 
 func calcNakamotoCoefficient(votingPowers []float64) int {

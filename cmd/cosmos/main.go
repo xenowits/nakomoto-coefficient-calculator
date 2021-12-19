@@ -3,31 +3,31 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 )
 
 type Request struct {
-	height int
-	page int
+	height   int
+	page     int
 	per_page int
 }
 
 type Response struct {
 	Jsonrpc string `json:"jsonrpc"`
-	Id int `json:"id"`
+	Id      int    `json:"id"`
 	// error string
 	Result struct {
 		Block_height string
-		Validators []struct {
-			Address string `json:"address"`
-			Voting_power string `json:"voting_power"`
+		Validators   []struct {
+			Address           string `json:"address"`
+			Voting_power      string `json:"voting_power"`
 			Proposer_priority string `json:"proposer_priority"`
-			Pub_key struct {
-				Type string `json:"type"`
+			Pub_key           struct {
+				Type  string `json:"type"`
 				Value string `json:"value"`
 			} `json:"pub_key"`
 		} `json:"validators"`
@@ -37,9 +37,9 @@ type Response struct {
 }
 
 type ErrorResponse struct {
-	Id int `json:"id"`
+	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
-	Error string `json:"error"`
+	Error   string `json:"error"`
 }
 
 func main() {
@@ -47,7 +47,7 @@ func main() {
 	pageNo, entriesPerPage := 1, 50
 	url := ""
 	for true {
-		url = fmt.Sprintf("https://rpc.cosmos.network/validators?page=%d&per_page=%d", pageNo, entriesPerPage);
+		url = fmt.Sprintf("https://rpc.cosmos.network/validators?page=%d&per_page=%d", pageNo, entriesPerPage)
 		resp, err := http.Get(url)
 		if err != nil {
 			errBody, _ := ioutil.ReadAll(resp.Body)
@@ -57,10 +57,10 @@ func main() {
 			log.Fatalln(err)
 		}
 		defer resp.Body.Close()
-	
+
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-		   log.Fatalln(err)
+			log.Fatalln(err)
 		}
 
 		var response Response
@@ -71,7 +71,7 @@ func main() {
 
 		// break if no more entries left
 		if len(response.Result.Validators) == 0 {
-			break;
+			break
 		}
 
 		// loop through the validators voting powers
@@ -90,5 +90,5 @@ func main() {
 
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
-	fmt.Println("The Nakamoto coefficient is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for cosmos is", nakamotoCoefficient)
 }
