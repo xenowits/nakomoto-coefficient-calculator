@@ -10,7 +10,11 @@ Golang
 
 ### Steps to run
 1. Make sure you have go installed in your system
-2. Run `go run cmd/cosmos/main.go`
+2. Run `go run cmd/NAME_OF_CHAIN/main.go`. For ex: `go run cmd/cosmos/main.go`
+
+### Chains currently supported
+1. Cosmos
+2. Polygon
 
 ### Future Work
-To add support for multiple other chains
+To add support for multiple other chains.

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 )
 
 type Request struct {
@@ -84,32 +85,10 @@ func main() {
 	}
 
 	// No need to sort as the result is already in sorted in descending order
-	totalVotingPower := calculateTotalVotingPower(votingPowers)
+	totalVotingPower := utils.CalculateTotalVotingPower(votingPowers)
 	fmt.Println("Total voting power:", totalVotingPower)
 
 	// now we're ready to calculate the nakomoto coefficient
-	nakamotoCoefficient := calcNakamotoCoefficient(totalVotingPower, votingPowers)
+	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient is", nakamotoCoefficient)
-}
-
-func calcNakamotoCoefficient(totalVotingPower int64, votingPowers []int64) int {
-	var cumulativePercent, thresholdPercent, curr float64 = 0.00, 33.33, 0.00
-	nakamotoCoefficient := 0
-	for _, vp := range votingPowers {
-		curr = float64(vp)/float64(totalVotingPower)
-		cumulativePercent += curr*100
-		nakamotoCoefficient += 1
-		if cumulativePercent>= thresholdPercent {
-			break
-		}
-	}
-	return nakamotoCoefficient
-}
-
-func calculateTotalVotingPower(votingPowers []int64) int64 {
-	var total int64 = 0
-	for _, vp := range votingPowers {
-		total += vp
-	}
-	return total
 }
