@@ -13,7 +13,7 @@ Golang
 ### Steps to run
 
 1. Make sure you have go installed in your system
-2. Run `go run cmd/NAME_OF_CHAIN/main.go`. For ex: `go run cmd/cosmos/main.go`
+2. Run `go run cmd/main.go`.
 
 ### Chains currently supported
 
@@ -21,6 +21,7 @@ Golang
 2. Polygon
 3. Binance Smart Chain
 4. Osmosis Zone
+5. Mina Protocol
 
 ### Future Work
 
