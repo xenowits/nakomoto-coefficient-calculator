@@ -33,7 +33,6 @@ func main() {
 	r := gin.Default()
 	r.GET("/nakamoto-coefficients", func(c *gin.Context) {
 		coefficients := getListOfCoefficients()
-		fmt.Println("fdfdfd", coefficients)
 		c.JSON(200, gin.H{
 			"coefficients": coefficients,
 		})
@@ -56,12 +55,10 @@ func getListOfCoefficients() []JsonResponse {
 		var chain_name, chain_token string
 		var nc_prev_val, nc_curr_val int
 		err = rows.Scan(&chain_name, &chain_token, &nc_prev_val, &nc_curr_val)
-		fmt.Println("values", chain_name, chain_token, nc_prev_val, nc_curr_val)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		naka_coefficients = append(naka_coefficients, JsonResponse{chain_name, chain_token, nc_curr_val, nc_prev_val, nc_curr_val - nc_prev_val})
 	}
-	fmt.Println("ncc", naka_coefficients)
 	return naka_coefficients
 }
