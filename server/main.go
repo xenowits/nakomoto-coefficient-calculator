@@ -11,6 +11,14 @@ import (
 
 var conn *pgx.Conn
 
+type JsonResponse struct {
+	Chain_name       string `json:"chain_name"`
+	Chain_token      string `json:"chain_token"`
+	Naka_co_curr_val int    `json:"naka_co_curr_val"`
+	Naka_co_prev_val int    `json:"naka_co_prev_val"`
+	Change           int    `json:"naka_co_change_val"`
+}
+
 func main() {
 	var err error
 	// Note: Uncomment the following line & set the database_url secretly, please.
@@ -23,8 +31,9 @@ func main() {
 	defer conn.Close(context.Background())
 
 	r := gin.Default()
-	coefficients := getListOfCoefficients()
 	r.GET("/nakamoto-coefficients", func(c *gin.Context) {
+		coefficients := getListOfCoefficients()
+		fmt.Println("fdfdfd", coefficients)
 		c.JSON(200, gin.H{
 			"coefficients": coefficients,
 		})
@@ -32,24 +41,27 @@ func main() {
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
-func getListOfCoefficients() []int {
-	var naka_coefficients []int
+func getListOfCoefficients() []JsonResponse {
+	var naka_coefficients []JsonResponse
 	var rows pgx.Rows
 	var err error
 
-	queryStmt := `SELECT naka_co_curr_val from naka_coefficients`
+	queryStmt := `SELECT chain_name, chain_token, naka_co_prev_val, naka_co_curr_val from naka_coefficients`
 	if rows, err = conn.Query(context.Background(), queryStmt); err != nil {
 		log.Fatalln(err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var nc int
-		err = rows.Scan(&nc)
+		var chain_name, chain_token string
+		var nc_prev_val, nc_curr_val int
+		err = rows.Scan(&chain_name, &chain_token, &nc_prev_val, &nc_curr_val)
+		fmt.Println("values", chain_name, chain_token, nc_prev_val, nc_curr_val)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		naka_coefficients = append(naka_coefficients, nc)
+		naka_coefficients = append(naka_coefficients, JsonResponse{chain_name, chain_token, nc_curr_val, nc_prev_val, nc_curr_val - nc_prev_val})
 	}
+	fmt.Println("ncc", naka_coefficients)
 	return naka_coefficients
 }
