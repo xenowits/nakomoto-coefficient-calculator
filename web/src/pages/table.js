@@ -2,7 +2,6 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BTable from "react-bootstrap/Table";
 import { useTable } from "react-table";
-import getData from "./getData";
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -81,7 +80,45 @@ function App() {
     []
   );
 
-  const data = React.useMemo(() => getData(20), []);
+  const dataList = [
+    {
+      chainName: "Binance",
+      tokenName: "BNB",
+      currVal: 7,
+      prevVal: 7,
+      changeVal: 0,
+    },
+    {
+      chainName: "Cosmos",
+      tokenName: "ATOM",
+      currVal: 7,
+      prevVal: 7,
+      changeVal: 0,
+    },
+    {
+      chainName: "Osmosis",
+      tokenName: "OSMO",
+      currVal: 4,
+      prevVal: 4,
+      changeVal: 0,
+    },
+    {
+      chainName: "Polygon",
+      tokenName: "MATIC",
+      currVal: 2,
+      prevVal: 2,
+      changeVal: 0,
+    },
+    {
+      chainName: "Mina",
+      tokenName: "MINA",
+      currVal: 11,
+      prevVal: 11,
+      changeVal: 0,
+    },
+  ];
+
+  const data = React.useMemo(() => dataList, []);
 
   return (
     <div>
