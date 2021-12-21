@@ -32,3 +32,5 @@ INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_c
 INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_co_curr_val) VALUES ('Mina', 'MINA', -1, 11);
 
 select * from naka_coefficients;
+
+\q
