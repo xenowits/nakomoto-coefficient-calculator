@@ -26,3 +26,4 @@ Golang
 ### Future Work
 
 To add support for multiple other chains.
+Seems you have already initiated Application of Registration Non- Core fields. To access Saved application please navigate to : Dashboard -> Services -> User Services -> My Saved Applications. 
