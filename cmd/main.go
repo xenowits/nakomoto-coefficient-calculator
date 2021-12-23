@@ -11,6 +11,7 @@ import (
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/mina"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/osmosis"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/polygon"
+	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/solana"
 )
 
 var conn *pgx.Conn
@@ -50,6 +51,11 @@ func main() {
 	prevVal = GetPrevVal("MINA")
 	currVal = mina.Mina()
 	saveUpdatedVals(currVal, prevVal, "MINA")
+
+	// solana
+	prevVal = GetPrevVal("SOL")
+	currVal = solana.Solana()
+	saveUpdatedVals(currVal, prevVal, "SOL")
 }
 
 // Query the database to get the previous (prior to updating it now) value of nakamoto coefficient for the given chain
@@ -58,7 +64,7 @@ func GetPrevVal(chain_token string) int {
 	var naka_co_prev_val int
 	if err := conn.QueryRow(context.Background(), queryStmt, chain_token).Scan(&naka_co_prev_val); err == nil {
 	} else {
-		fmt.Println("Read unsuccessful for " + chain_token, err)
+		fmt.Println("Read unsuccessful for "+chain_token, err)
 		return -1
 	}
 	return naka_co_prev_val
@@ -69,7 +75,7 @@ func saveUpdatedVals(curr_val int, prev_val int, chain_token string) error {
 	queryStmt := `UPDATE naka_coefficients SET naka_co_curr_val=$1, naka_co_prev_val=$2 WHERE chain_token=$3`
 	_, err := conn.Exec(context.Background(), queryStmt, curr_val, prev_val, chain_token)
 	if err != nil {
-		fmt.Println("Write unsuccessful for " + chain_token, err)
+		fmt.Println("Write unsuccessful for "+chain_token, err)
 	}
 	return err
 }
