@@ -23,8 +23,8 @@ Golang
 4. Osmosis Zone
 5. Mina Protocol
 6. Solana
+7. Avalanche
 
 ### Future Work
 
 To add support for multiple other chains.
-Seems you have already initiated Application of Registration Non- Core fields. To access Saved application please navigate to : Dashboard -> Services -> User Services -> My Saved Applications.
