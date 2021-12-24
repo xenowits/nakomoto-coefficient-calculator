@@ -6,13 +6,14 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v4"
+	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/avalanche"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/binance"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/cosmos"
-	// "github.com/xenowits/nakamoto-coefficient-calculator/cmd/mina"
+	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/mina"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/osmosis"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/polygon"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/solana"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/avalanche"
+	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/terra"
 )
 
 var conn *pgx.Conn
@@ -49,19 +50,24 @@ func main() {
 	saveUpdatedVals(currVal, prevVal, "MATIC")
 
 	// mina
-	// prevVal = GetPrevVal("MINA")
-	// currVal = mina.Mina()
-	// saveUpdatedVals(currVal, prevVal, "MINA")
+	prevVal = GetPrevVal("MINA")
+	currVal = mina.Mina()
+	saveUpdatedVals(currVal, prevVal, "MINA")
 
 	// solana
 	prevVal = GetPrevVal("SOL")
 	currVal = solana.Solana()
 	saveUpdatedVals(currVal, prevVal, "SOL")
 
-	// solana
+	// avalanche
 	prevVal = GetPrevVal("AVAX")
 	currVal = avalanche.Avalanche()
 	saveUpdatedVals(currVal, prevVal, "AVAX")
+
+	// terra
+	prevVal = GetPrevVal("LUNA")
+	currVal = terra.Terra()
+	saveUpdatedVals(currVal, prevVal, "LUNA")
 }
 
 // Query the database to get the previous (prior to updating it now) value of nakamoto coefficient for the given chain

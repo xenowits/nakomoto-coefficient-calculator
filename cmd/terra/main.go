@@ -1,13 +1,14 @@
-package cosmos
+package terra
 
 import (
 	"encoding/json"
 	"fmt"
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
+
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 )
 
 type Request struct {
@@ -30,7 +31,6 @@ type Response struct {
 				Value string `json:"value"`
 			} `json:"pub_key"`
 		} `json:"validators"`
-		Count string `json:"count"`
 		Total string `json:"total"`
 	} `json:"result"`
 }
@@ -41,46 +41,35 @@ type ErrorResponse struct {
 	Error   string `json:"error"`
 }
 
-func Cosmos() int {
+// https://fcd.terra.dev/swagger
+func Terra() int {
 	votingPowers := make([]int64, 0, 200)
-	pageNo, entriesPerPage := 1, 50
-	url := ""
-	for true {
-		url = fmt.Sprintf("https://rpc.cosmos.network/validators?page=%d&per_page=%d", pageNo, entriesPerPage)
-		resp, err := http.Get(url)
-		if err != nil {
-			errBody, _ := ioutil.ReadAll(resp.Body)
-			var errResp ErrorResponse
-			json.Unmarshal(errBody, &errResp)
-			log.Println(errResp.Error)
-			log.Fatalln(err)
-		}
-		defer resp.Body.Close()
+	url := fmt.Sprintf("https://fcd.terra.dev/validatorsets/latest")
+	resp, err := http.Get(url)
+	if err != nil {
+		errBody, _ := ioutil.ReadAll(resp.Body)
+		var errResp ErrorResponse
+		json.Unmarshal(errBody, &errResp)
+		log.Println(errResp.Error)
+		log.Fatalln(err)
+	}
+	defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatalln(err)
-		}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-		var response Response
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			log.Fatalln(err)
-		}
+	var response Response
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-		// break if no more entries left
-		if len(response.Result.Validators) == 0 {
-			break
-		}
-
-		// loop through the validators voting powers
-		for _, ele := range response.Result.Validators {
-			val, _ := strconv.Atoi(ele.Voting_power)
-			votingPowers = append(votingPowers, int64(val))
-		}
-
-		// increment counters
-		pageNo += 1
+	// loop through the validators voting powers
+	for _, ele := range response.Result.Validators {
+		val, _ := strconv.Atoi(ele.Voting_power)
+		votingPowers = append(votingPowers, int64(val))
 	}
 
 	// No need to sort as the result is already in sorted in descending order
@@ -89,7 +78,7 @@ func Cosmos() int {
 
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
-	fmt.Println("The Nakamoto coefficient for cosmos is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for terra is", nakamotoCoefficient)
 
 	return nakamotoCoefficient
 }

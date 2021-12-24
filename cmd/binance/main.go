@@ -3,10 +3,11 @@ package binance
 import (
 	"encoding/json"
 	"fmt"
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 )
 
 type Request struct {
@@ -32,6 +33,7 @@ type ErrorResponse struct {
 	Error   string `json:"error"`
 }
 
+// https://docs.binance.org/api-reference/dex-api/staking.html#v1stakingchainschain-idvalidators
 func Binance() int {
 	votingPowers := make([]float64, 0, 200)
 	pageLimit, pageOffset := 50, 0
@@ -72,6 +74,9 @@ func Binance() int {
 		// increment counters
 		pageOffset += pageLimit
 	}
+
+	// NOTE: NO need to calculate total voting power as the API response already
+	// sends us proportional shares of each validator
 
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := calcNakamotoCoefficient(votingPowers)
