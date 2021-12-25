@@ -25,6 +25,7 @@ Golang
 6. [Solana](https://solana.com/)
 7. [Avalanche](https://www.avax.network/)
 8. [Terra](https://www.terra.money/)
+9. [Graph Protocol](https://thegraph.com/)
 
 ### Notes
 1. Client code (for webpage) is present inside `/web`.

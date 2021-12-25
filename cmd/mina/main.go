@@ -41,31 +41,33 @@ func reverse(numbers []float64) {
 	}
 }
 
-func Mina() int {
+func Mina() (int, error) {
 	votingPowers := make([]float64, 0, 200)
 	pageNo, entriesPerPage := 0, 50
 	url := ""
 	for true {
-		url = fmt.Sprintf("https://mina.staketab.com:8181/api/validator/all/?page=%d&size=%d&sortBy=canonical_block&findStr=&orderBy=DESC", pageNo, entriesPerPage)
+		// Check the most active url in the network logs here: https://mina.staketab.com/validators/stake 
+		// Sometimes it changes, like once it changed from mina.staketab.com to t-mina.staketab.com
+		url = fmt.Sprintf("https://t-mina.staketab.com:8181/api/validator/all/?page=%d&size=%d&sortBy=canonical_block&findStr=&orderBy=DESC", pageNo, entriesPerPage)
 		resp, err := http.Get(url)
 		if err != nil {
 			errBody, _ := ioutil.ReadAll(resp.Body)
 			var errResp ErrorResponse
 			json.Unmarshal(errBody, &errResp)
 			log.Println(errResp.Error)
-			log.Fatalln(err)
+			return -1, err
 		}
 		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatalln(err)
+			return -1, err
 		}
 
 		var response Response
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			log.Fatalln(err)
+			return -1, err
 		}
 
 		// break if no more entries left
@@ -89,7 +91,7 @@ func Mina() int {
 	nakamotoCoefficient := calcNakamotoCoefficient(votingPowers)
 	fmt.Println("The Nakamoto coefficient for Mina is", nakamotoCoefficient)
 
-	return nakamotoCoefficient
+	return nakamotoCoefficient, nil
 }
 
 func calcNakamotoCoefficient(votingPowers []float64) int {

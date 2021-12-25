@@ -41,7 +41,7 @@ type ErrorResponse struct {
 	Error   string `json:"error"`
 }
 
-func Cosmos() int {
+func Cosmos() (int, error) {
 	votingPowers := make([]int64, 0, 200)
 	pageNo, entriesPerPage := 1, 50
 	url := ""
@@ -53,19 +53,19 @@ func Cosmos() int {
 			var errResp ErrorResponse
 			json.Unmarshal(errBody, &errResp)
 			log.Println(errResp.Error)
-			log.Fatalln(err)
+			return -1, nil
 		}
 		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatalln(err)
+			return -1, nil
 		}
 
 		var response Response
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			log.Fatalln(err)
+			return -1, nil
 		}
 
 		// break if no more entries left
@@ -91,5 +91,5 @@ func Cosmos() int {
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for cosmos is", nakamotoCoefficient)
 
-	return nakamotoCoefficient
+	return nakamotoCoefficient, nil
 }

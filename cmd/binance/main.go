@@ -34,7 +34,7 @@ type ErrorResponse struct {
 }
 
 // https://docs.binance.org/api-reference/dex-api/staking.html#v1stakingchainschain-idvalidators
-func Binance() int {
+func Binance() (int, error) {
 	votingPowers := make([]float64, 0, 200)
 	pageLimit, pageOffset := 50, 0
 	url := ""
@@ -46,19 +46,19 @@ func Binance() int {
 			var errResp ErrorResponse
 			json.Unmarshal(errBody, &errResp)
 			log.Println(errResp.Error)
-			log.Fatalln(err)
+			return -1, err
 		}
 		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatalln(err)
+			return -1, err
 		}
 
 		var response Response
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			log.Fatalln(err)
+			return -1, err
 		}
 
 		// break if no more entries left
@@ -82,7 +82,7 @@ func Binance() int {
 	nakamotoCoefficient := calcNakamotoCoefficient(votingPowers)
 	fmt.Println("The Nakamoto coefficient for binance chain is", nakamotoCoefficient)
 
-	return nakamotoCoefficient
+	return nakamotoCoefficient, nil
 }
 
 func calcNakamotoCoefficient(votingPowers []float64) int {

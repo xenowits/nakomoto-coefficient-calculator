@@ -32,7 +32,7 @@ type ErrorResponse struct {
 // In AVAX, stake amounts are already multiplied by 10^9
 // So, we need to deal with big numbers here. 
 // Else, if we divide each value with 10^9, we have to deal with fractional numbers which is worse.
-func Avalanche() int {
+func Avalanche() (int, error) {
 	votingPowers := make([]big.Int, 0)
 
 	url := fmt.Sprintf("https://api.avax.network/ext/P")
@@ -51,19 +51,19 @@ func Avalanche() int {
 		var errResp ErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
-		log.Fatalln(err)
+		return -1, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		return -1, err
 	}
 
 	var response Response
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Fatalln(err)
+		return -1, err
 	}
 
 	// loop through the validators voting powers
@@ -88,7 +88,7 @@ func Avalanche() int {
 	nakamotoCoefficient := calcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for Avalanche is", nakamotoCoefficient)
 
-	return nakamotoCoefficient
+	return nakamotoCoefficient, nil
 }
 
 func calculateTotalVotingPower(votingPowers []big.Int) *big.Int {

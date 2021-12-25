@@ -42,7 +42,7 @@ type ErrorResponse struct {
 }
 
 // https://fcd.terra.dev/swagger
-func Terra() int {
+func Terra() (int, error) {
 	votingPowers := make([]int64, 0, 200)
 	url := fmt.Sprintf("https://fcd.terra.dev/validatorsets/latest")
 	resp, err := http.Get(url)
@@ -51,19 +51,19 @@ func Terra() int {
 		var errResp ErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
-		log.Fatalln(err)
+		return -1, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		return -1, err
 	}
 
 	var response Response
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Fatalln(err)
+		return -1, err
 	}
 
 	// loop through the validators voting powers
@@ -80,5 +80,5 @@ func Terra() int {
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for terra is", nakamotoCoefficient)
 
-	return nakamotoCoefficient
+	return nakamotoCoefficient, nil
 }

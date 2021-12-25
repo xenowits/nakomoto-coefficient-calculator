@@ -36,7 +36,7 @@ type ErrorResponse struct {
 	Error   string `json:"error"`
 }
 
-func Osmosis() int {
+func Osmosis() (int, error) {
 	votingPowers := make([]int64, 0, 200)
 
 	url := fmt.Sprintf("https://lcd-osmosis.keplr.app/staking/validators")
@@ -46,19 +46,19 @@ func Osmosis() int {
 		var errResp ErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
-		log.Fatalln(err)
+		return -1, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
+		return -1, err
 	}
 
 	var response Response
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Fatalln(err)
+		return -1, err
 	}
 
 	// loop through the validators voting powers
@@ -77,5 +77,5 @@ func Osmosis() int {
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for osmosiszone is", nakamotoCoefficient)
 
-	return nakamotoCoefficient
+	return nakamotoCoefficient, nil
 }

@@ -1,21 +1,23 @@
-package solana
+package graph
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"math/big"
 	"net/http"
-	"os"
 	"sort"
 )
 
-type Response []struct {
-	Name         string `json:"name"`
-	Account      string `json:"keybase_id"`
-	Active_stake int    `json:"active_stake"`
-	Delinquent   bool   `json:"delinquent"`
+type Response struct {
+	Data struct {
+		Indexers []struct {
+			Id           string `json:"id"`
+			StakedTokens string `json:"stakedTokens"`
+		} `json:"indexers"`
+	} `json:"data"`
 }
 
 type ErrorResponse struct {
@@ -24,17 +26,15 @@ type ErrorResponse struct {
 	Error   string `json:"error"`
 }
 
-func Solana() (int, error) {
-	votingPowers := make([]big.Int, 0, 200)
+func Graph() (int, error) {
+	votingPowers := make([]big.Int, 0, 1000)
 
-	url := fmt.Sprintf("https://www.validators.app/api/v1/validators/mainnet.json")
+	url := fmt.Sprintf("https://gateway.thegraph.com/network")
+	jsonReqData := []byte(`{"query":"{ indexers (first: 1000) { id stakedTokens } }","variables":{}}`)
 
 	// Create a new request using http
-	req, err := http.NewRequest("GET", url, nil)
-
-	// add authorization header to the req
-	// NOTE: get your own API_KEY from https://www.validators.app/api-documentation
-	req.Header.Add("Token", os.Getenv("SOLANA_API_KEY"))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonReqData))
+	req.Header.Add("Content-Type", "application/json")
 
 	// Send req using http Client
 	client := &http.Client{}
@@ -61,8 +61,13 @@ func Solana() (int, error) {
 	}
 
 	// loop through the validators voting powers
-	for _, ele := range response {
-		votingPowers = append(votingPowers, *big.NewInt(int64(ele.Active_stake)))
+	for _, ele := range response.Data.Indexers {
+		n, ok := new(big.Int).SetString(ele.StakedTokens, 10)
+		if !ok {
+			log.Fatalln("Couldn't parse string", ele.StakedTokens)
+		} else {
+			votingPowers = append(votingPowers, *n)
+		}
 	}
 
 	// need to sort the powers in descending order since they are in random order
@@ -75,11 +80,11 @@ func Solana() (int, error) {
 	})
 
 	totalVotingPower := calculateTotalVotingPower(votingPowers)
-	fmt.Println("Total voting power:", new(big.Float).SetInt(totalVotingPower))
+	fmt.Println("Total voting power:", totalVotingPower)
 
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := calcNakamotoCoefficient(totalVotingPower, votingPowers)
-	fmt.Println("The Nakamoto coefficient for Solana is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for graph protocol is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
