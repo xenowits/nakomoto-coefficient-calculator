@@ -84,7 +84,7 @@ func UpdateChainInfo(chain_token string) {
 	}
 
 	if err != nil {
-		log.Println("Error occurred for MINA", err)
+		log.Println("Error occurred for", chain_token, err)
 	} else {
 		SaveUpdatedVals(currVal, prevVal, chain_token)
 	}
