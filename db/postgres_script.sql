@@ -1,12 +1,12 @@
-brew install postgresql
+-- brew install postgresql
 
-brew services start postgresql
+-- brew services start postgresql
 
-psql postgres
+-- psql postgres
 
-CREATE ROLE xenowits WITH LOGIN PASSWORD ‘password’;
+-- CREATE ROLE xenowits WITH LOGIN PASSWORD ‘password’;
 
-ALTER ROLE xenowits CREATEDB;
+-- ALTER ROLE xenowits CREATEDB;
 
 \c postgres;
 
@@ -38,6 +38,8 @@ INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_c
 INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_co_curr_val) VALUES ('Terra', 'LUNA', -1, 7);
 
 INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_co_curr_val) VALUES ('Graph', 'GRT', -1, 3);
+
+INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_co_curr_val) VALUES ('Thorchain', 'RUNE', -1, 10);
 
 select * from naka_coefficients;
 

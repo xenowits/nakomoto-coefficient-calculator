@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/big"
 	"net/http"
 	"sort"
 	"strconv"
-	"math/big"
+
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 )
 
 type Response struct {
@@ -30,7 +32,7 @@ type ErrorResponse struct {
 }
 
 // In AVAX, stake amounts are already multiplied by 10^9
-// So, we need to deal with big numbers here. 
+// So, we need to deal with big numbers here.
 // Else, if we divide each value with 10^9, we have to deal with fractional numbers which is worse.
 func Avalanche() (int, error) {
 	votingPowers := make([]big.Int, 0)
@@ -81,38 +83,12 @@ func Avalanche() (int, error) {
 		return false
 	})
 
-	totalVotingPower := calculateTotalVotingPower(votingPowers)
+	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
 	fmt.Println("Total voting power:", totalVotingPower)
 
 	// // now we're ready to calculate the nakomoto coefficient
-	nakamotoCoefficient := calcNakamotoCoefficient(totalVotingPower, votingPowers)
+	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for Avalanche is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
-}
-
-func calculateTotalVotingPower(votingPowers []big.Int) *big.Int {
-	total := big.NewInt(0)
-	for _, vp := range votingPowers {
-		total = new(big.Int).Add(total, &vp)
-	}
-	return total
-}
-
-func calcNakamotoCoefficient(totalVotingPower *big.Int, votingPowers []big.Int) int {
-	thresholdPercent := big.NewFloat(0.33)
-	thresholdVal := new(big.Float).Mul(new(big.Float).SetInt(totalVotingPower), thresholdPercent)
-	cumulativeVal := big.NewFloat(0.00)
-	nakamotoCoefficient := 0
-
-	for _, vp := range votingPowers {
-		z := new(big.Float).Add(cumulativeVal, new(big.Float).SetInt(&vp))
-		cumulativeVal = z
-		nakamotoCoefficient += 1
-		if cumulativeVal.Cmp(thresholdVal) == +1 {
-			break
-		}
-	}
-
-	return nakamotoCoefficient
 }

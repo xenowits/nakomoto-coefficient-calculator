@@ -16,6 +16,7 @@ import (
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/polygon"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/solana"
 	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/terra"
+	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/thorchain"
 )
 
 var conn *pgx.Conn
@@ -57,6 +58,9 @@ func main() {
 
 	// graph
 	UpdateChainInfo("GRT")
+
+	// thorchain
+	UpdateChainInfo("RUNE")
 }
 
 func UpdateChainInfo(chain_token string) {
@@ -81,6 +85,8 @@ func UpdateChainInfo(chain_token string) {
 		currVal, err = terra.Terra()
 	case "GRT":
 		currVal, err = graph.Graph()
+	case "RUNE":
+		currVal, err = thorchain.Thorchain()
 	}
 
 	if err != nil {

@@ -9,6 +9,8 @@ import (
 	"math/big"
 	"net/http"
 	"sort"
+
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
 )
 
 type Response struct {
@@ -79,38 +81,12 @@ func Graph() (int, error) {
 		return false
 	})
 
-	totalVotingPower := calculateTotalVotingPower(votingPowers)
+	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
 	fmt.Println("Total voting power:", totalVotingPower)
 
 	// now we're ready to calculate the nakomoto coefficient
-	nakamotoCoefficient := calcNakamotoCoefficient(totalVotingPower, votingPowers)
+	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for graph protocol is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
-}
-
-func calculateTotalVotingPower(votingPowers []big.Int) *big.Int {
-	total := big.NewInt(0)
-	for _, vp := range votingPowers {
-		total = new(big.Int).Add(total, &vp)
-	}
-	return total
-}
-
-func calcNakamotoCoefficient(totalVotingPower *big.Int, votingPowers []big.Int) int {
-	thresholdPercent := big.NewFloat(0.33)
-	thresholdVal := new(big.Float).Mul(new(big.Float).SetInt(totalVotingPower), thresholdPercent)
-	cumulativeVal := big.NewFloat(0.00)
-	nakamotoCoefficient := 0
-
-	for _, vp := range votingPowers {
-		z := new(big.Float).Add(cumulativeVal, new(big.Float).SetInt(&vp))
-		cumulativeVal = z
-		nakamotoCoefficient += 1
-		if cumulativeVal.Cmp(thresholdVal) == +1 {
-			break
-		}
-	}
-
-	return nakamotoCoefficient
 }
