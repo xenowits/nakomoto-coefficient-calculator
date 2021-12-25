@@ -12,8 +12,11 @@ Golang
 
 ### Steps to run
 
-1. Make sure you have go installed in your system
-2. Run `go run cmd/main.go`.
+1. Install [golang](https://go.dev/doc/install)
+2. Also, install [postgresql](https://www.postgresql.org/download/) and make sure it is running in the background
+3. After postgres is installed, copy the commands in `db/postgres_script.sql` into the terminal
+4. In a separate terminal, run `go run cmd/main.go`. This will start the core logic of calculating the nakamoto coefficients.
+5. If you want to start the server, run `go run server/main.go` in another terminal.
 
 ### Chains currently supported
 
@@ -26,8 +29,10 @@ Golang
 7. [Avalanche](https://www.avax.network/)
 8. [Terra](https://www.terra.money/)
 9. [Graph Protocol](https://thegraph.com/)
+10. [Thorchain](https://www.thorchain.com/)
 
 ### Notes
+
 1. Client code (for webpage) is present inside `/web`.
 2. The actual logic is present inside `/cmd`. So, ideally a cron job would be run after every `JOB_INTERVAL` which would save/refresh the nakamoto-coefficients `database`.
 3. The server code resides inside `/server`. It is a simple server which would only respond to `GET /nakamoto-coefficients`. It basically queries the database and returns the values.
