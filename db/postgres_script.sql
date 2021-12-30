@@ -2,11 +2,16 @@
 
 -- brew services start postgresql
 
+-- FOR LINUX
+-- sudo -i -u postgres
+
 -- psql postgres
 
 -- CREATE ROLE xenowits WITH LOGIN PASSWORD ‘password’;
 
 -- ALTER ROLE xenowits CREATEDB;
+
+-- GRANT ALL PRIVILEGES ON TABLE naka_coefficients TO xenowits;
 
 \c postgres;
 
@@ -44,3 +49,5 @@ INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_c
 select * from naka_coefficients;
 
 \q
+
+-- TO EXIT IN LINUX, USE Ctrl + D

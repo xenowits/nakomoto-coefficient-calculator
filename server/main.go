@@ -21,8 +21,8 @@ type JsonResponse struct {
 
 func main() {
 	var err error
-	// Note: Uncomment the following line & set the database_url secretly, please.
-	os.Setenv("DATABASE_URL", "postgres://xenowits:xenowits@localhost:5432/postgres")
+	// Note: Run the following command in your terminal after putting proper details
+	// export DATABASE_URL=postgres://username:password@localhost:5432/database_name
 	conn, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
