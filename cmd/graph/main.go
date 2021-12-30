@@ -31,11 +31,16 @@ type ErrorResponse struct {
 func Graph() (int, error) {
 	votingPowers := make([]big.Int, 0, 1000)
 
-	url := fmt.Sprintf("https://gateway.thegraph.com/network")
+	// Sometimes, the gateway URL doesn't work idk why
+	// url := fmt.Sprintf("https://gateway.thegraph.com/network")
+	url := fmt.Sprintf("https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet")
 	jsonReqData := []byte(`{"query":"{ indexers (first: 1000) { id stakedTokens } }","variables":{}}`)
 
 	// Create a new request using http
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonReqData))
+	if err != nil {
+		return -1, err
+	}
 	req.Header.Add("Content-Type", "application/json")
 
 	// Send req using http Client

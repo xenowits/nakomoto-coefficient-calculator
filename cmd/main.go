@@ -23,8 +23,6 @@ var conn *pgx.Conn
 
 func main() {
 	var err error
-	// Note: Run the following command in your terminal after putting proper details
-	// export DATABASE_URL=postgres://username:password@localhost:5432/database_name
 	conn, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)

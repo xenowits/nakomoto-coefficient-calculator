@@ -15,6 +15,9 @@ Golang
 1. Install [golang](https://go.dev/doc/install)
 2. Also, install [postgresql](https://www.postgresql.org/download/) and make sure it is running in the background
 3. After postgres is installed, copy the commands in `db/postgres_script.sql` into the terminal
+4. Add following to your `~/.bashrc` or `~/.zshrc`:
+    1. `export SOLANA_API_KEY=api_key`
+    2. `export DATABASE_URL=postgres://username:password@localhost:5432/postgres`
 4. In a separate terminal, run `go run cmd/main.go`. This will start the core logic of calculating the nakamoto coefficients.
 5. If you want to start the server, run `go run server/main.go` in another terminal.
 
