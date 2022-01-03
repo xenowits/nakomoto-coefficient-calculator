@@ -18,7 +18,7 @@ Golang
 4. Add following to your `~/.bashrc` or `~/.zshrc`:
     1. `export SOLANA_API_KEY=api_key`
     2. `export DATABASE_URL=postgres://username:password@localhost:5432/postgres`
-4. In a separate terminal, run `go run cmd/main.go`. This will start the core logic of calculating the nakamoto coefficients.
+4. In a separate terminal, run `go run core/main.go`. This will start the core logic of calculating the nakamoto coefficients.
 5. If you want to start the server, run `go run server/main.go` in another terminal.
 
 ### Chains currently supported
@@ -36,10 +36,9 @@ Golang
 
 ### Notes
 
-1. Client code (for webpage) is present inside `/web`.
-2. The actual logic is present inside `/cmd`. So, ideally a cron job would be run after every `JOB_INTERVAL` which would save/refresh the nakamoto-coefficients `database`.
+1. The actual logic is present inside `/core`. So, ideally a cron job would be run after every `JOB_INTERVAL` which would save/refresh the nakamoto-coefficients `database`.
 3. The server code resides inside `/server`. It is a simple server which would only respond to `GET /nakamoto-coefficients`. It basically queries the database and returns the values.
 
 ### Future Work
 
-To add support for multiple other chains.
+To add support for multiple other chains in `/v1`

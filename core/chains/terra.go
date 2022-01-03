@@ -1,4 +1,4 @@
-package terra
+package chains
 
 import (
 	"encoding/json"
@@ -8,16 +8,10 @@ import (
 	"net/http"
 	"strconv"
 
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
-type Request struct {
-	height   int
-	page     int
-	per_page int
-}
-
-type Response struct {
+type TerraResponse struct {
 	Jsonrpc string `json:"jsonrpc"`
 	Id      int    `json:"id"`
 	Result struct {
@@ -35,7 +29,7 @@ type Response struct {
 	} `json:"result"`
 }
 
-type ErrorResponse struct {
+type TerraErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
@@ -48,7 +42,7 @@ func Terra() (int, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp ErrorResponse
+		var errResp TerraErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
 		return -1, err
@@ -60,7 +54,7 @@ func Terra() (int, error) {
 		return -1, err
 	}
 
-	var response Response
+	var response TerraResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return -1, err

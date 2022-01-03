@@ -1,4 +1,4 @@
-package binance
+package chains
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
 type Request struct {
@@ -16,7 +16,7 @@ type Request struct {
 	per_page int
 }
 
-type Response struct {
+type BinanceResponse struct {
 	Total      int `json:"total"`
 	Validators []struct {
 		Validator             string  `json:"validator"`
@@ -27,7 +27,7 @@ type Response struct {
 	} `json:"validators"`
 }
 
-type ErrorResponse struct {
+type BinanceErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
@@ -43,7 +43,7 @@ func Binance() (int, error) {
 		resp, err := http.Get(url)
 		if err != nil {
 			errBody, _ := ioutil.ReadAll(resp.Body)
-			var errResp ErrorResponse
+			var errResp BinanceErrorResponse
 			json.Unmarshal(errBody, &errResp)
 			log.Println(errResp.Error)
 			return -1, err
@@ -55,7 +55,7 @@ func Binance() (int, error) {
 			return -1, err
 		}
 
-		var response Response
+		var response BinanceResponse
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			return -1, err

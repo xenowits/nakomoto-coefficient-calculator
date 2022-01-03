@@ -1,4 +1,4 @@
-package graph
+package chains
 
 import (
 	"bytes"
@@ -10,10 +10,10 @@ import (
 	"net/http"
 	"sort"
 
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
-type Response struct {
+type GraphResponse struct {
 	Data struct {
 		Indexers []struct {
 			Id           string `json:"id"`
@@ -22,7 +22,7 @@ type Response struct {
 	} `json:"data"`
 }
 
-type ErrorResponse struct {
+type GraphErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
@@ -32,8 +32,8 @@ func Graph() (int, error) {
 	votingPowers := make([]big.Int, 0, 1000)
 
 	// Sometimes, the gateway URL doesn't work idk why
-	// url := fmt.Sprintf("https://gateway.thegraph.com/network")
-	url := fmt.Sprintf("https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet")
+	url := fmt.Sprintf("https://gateway.thegraph.com/network")
+	// url := fmt.Sprintf("https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet")
 	jsonReqData := []byte(`{"query":"{ indexers (first: 1000) { id stakedTokens } }","variables":{}}`)
 
 	// Create a new request using http
@@ -49,7 +49,7 @@ func Graph() (int, error) {
 
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp ErrorResponse
+		var errResp GraphErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
 		return -1, err
@@ -61,7 +61,7 @@ func Graph() (int, error) {
 		return -1, err
 	}
 
-	var response Response
+	var response GraphResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return -1, err

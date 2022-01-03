@@ -1,4 +1,4 @@
-package avalanche
+package chains
 
 import (
 	"bytes"
@@ -11,10 +11,10 @@ import (
 	"sort"
 	"strconv"
 
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
-type Response struct {
+type AvalancheResponse struct {
 	Jsonrpc string `json:"jsonrpc"`
 	Id      int    `json:"id"`
 	Result  struct {
@@ -25,7 +25,7 @@ type Response struct {
 	} `json:"result"`
 }
 
-type ErrorResponse struct {
+type AvalancheErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
@@ -50,7 +50,7 @@ func Avalanche() (int, error) {
 
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp ErrorResponse
+		var errResp AvalancheErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
 		return -1, err
@@ -62,7 +62,7 @@ func Avalanche() (int, error) {
 		return -1, err
 	}
 
-	var response Response
+	var response AvalancheResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return -1, err

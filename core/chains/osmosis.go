@@ -1,49 +1,49 @@
-package polygon
+package chains
 
 import (
 	"encoding/json"
 	"fmt"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"sort"
-
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
+	"strconv"
 )
 
-type Response struct {
+type OsmosisResponse struct {
 	Height string `json:"height"`
-	Result struct {
-		Block_height string
-		Validators   []struct {
-			ID         int    `json:"id"`
-			StartEpoch int    `json:"startEpoch"`
-			EndEpoch   int    `json:"endEpoch"`
-			Nonce      int    `json:"nonce"`
-			Power      int64  `json:"power"`
-			PubKey     string `json:"pubKey"`
-			Signer     string `json:"signer"`
-			Jailed     bool   `json:"jailed"`
-		} `json:"validators"`
-		Count string `json:"count"`
-		Total string `json:"total"`
+	Result []struct {
+		OperatorAddress string `json:"operator_address"`
+		ConsensusPubkey struct {
+			Type  string `json:"type"`
+			Value string `json:"value"`
+		} `json:"consensus_pubkey"`
+		Tokens      string `json:"tokens"`
+		Description struct {
+			Moniker         string `json:"moniker"`
+			Identity        string `json:"identity"`
+			Website         string `json:"website"`
+			SecurityContact string `json:"security_contact"`
+			Details         string `json:"details"`
+		} `json:"description"`
 	} `json:"result"`
 }
 
-type ErrorResponse struct {
+type OsmosisErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
 }
 
-func Polygon() (int, error) {
+func Osmosis() (int, error) {
 	votingPowers := make([]int64, 0, 200)
 
-	url := fmt.Sprintf("https://heimdall.api.matic.network/staking/validator-set")
+	url := fmt.Sprintf("https://lcd-osmosis.keplr.app/staking/validators")
 	resp, err := http.Get(url)
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp ErrorResponse
+		var errResp OsmosisErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
 		return -1, err
@@ -55,15 +55,16 @@ func Polygon() (int, error) {
 		return -1, err
 	}
 
-	var response Response
+	var response OsmosisResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return -1, err
 	}
 
 	// loop through the validators voting powers
-	for _, ele := range response.Result.Validators {
-		votingPowers = append(votingPowers, int64(ele.Power))
+	for _, ele := range response.Result {
+		val, _ := strconv.Atoi(ele.Tokens)
+		votingPowers = append(votingPowers, int64(val))
 	}
 
 	// need to sort the powers in descending order since they are in random order
@@ -74,7 +75,7 @@ func Polygon() (int, error) {
 
 	// // now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
-	fmt.Println("The Nakamoto coefficient for 0xPolygon is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for osmosiszone is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }

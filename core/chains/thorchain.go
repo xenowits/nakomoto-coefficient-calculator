@@ -1,4 +1,4 @@
-package thorchain
+package chains
 
 import (
 	"encoding/json"
@@ -9,16 +9,16 @@ import (
 	"net/http"
 	"sort"
 
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
-type Response []struct {
+type ThorchainResponse []struct {
 	NodeAddress string `json:"node_address"`
 	Bond        string `json:"bond"`
 	Status      string `json:"status"`
 }
 
-type ErrorResponse struct {
+type ThorchainErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
@@ -30,7 +30,7 @@ func Thorchain() (int, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp ErrorResponse
+		var errResp ThorchainErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
 		return -1, nil
@@ -39,7 +39,7 @@ func Thorchain() (int, error) {
 
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp ErrorResponse
+		var errResp ThorchainErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
 		return -1, err
@@ -51,7 +51,7 @@ func Thorchain() (int, error) {
 		return -1, err
 	}
 
-	var response Response
+	var response ThorchainResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return -1, err

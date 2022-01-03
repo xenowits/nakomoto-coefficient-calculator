@@ -1,4 +1,4 @@
-package mina
+package chains
 
 import (
 	"encoding/json"
@@ -8,16 +8,10 @@ import (
 	"net/http"
 	"sort"
 
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
-type Request struct {
-	height   int
-	page     int
-	per_page int
-}
-
-type Response struct {
+type MinaResponse struct {
 	Content []struct {
 		Pk             string  `json:"pk"`
 		Name           string  `json:"name"`
@@ -29,7 +23,7 @@ type Response struct {
 	TotalElements int `json:"totalElements"`
 }
 
-type ErrorResponse struct {
+type MinaErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
@@ -52,7 +46,7 @@ func Mina() (int, error) {
 		resp, err := http.Get(url)
 		if err != nil {
 			errBody, _ := ioutil.ReadAll(resp.Body)
-			var errResp ErrorResponse
+			var errResp MinaErrorResponse
 			json.Unmarshal(errBody, &errResp)
 			log.Println(errResp.Error)
 			return -1, err
@@ -64,7 +58,7 @@ func Mina() (int, error) {
 			return -1, err
 		}
 
-		var response Response
+		var response MinaResponse
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			return -1, err
@@ -88,13 +82,13 @@ func Mina() (int, error) {
 	reverse(votingPowers)
 
 	// now we're ready to calculate the nakomoto coefficient
-	nakamotoCoefficient := calcNakamotoCoefficient(votingPowers)
+	nakamotoCoefficient := calcNakamotoCoefficientForMina(votingPowers)
 	fmt.Println("The Nakamoto coefficient for Mina is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
 
-func calcNakamotoCoefficient(votingPowers []float64) int {
+func calcNakamotoCoefficientForMina(votingPowers []float64) int {
 	var cumulativePercent, thresholdPercent float64 = 0.00, utils.THRESHOLD_PERCENT
 	nakamotoCoefficient := 0
 	for _, vpp := range votingPowers {

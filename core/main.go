@@ -7,16 +7,7 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v4"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/avalanche"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/binance"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/cosmos"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/graph"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/mina"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/osmosis"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/polygon"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/solana"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/terra"
-	"github.com/xenowits/nakamoto-coefficient-calculator/cmd/thorchain"
+	"github.com/xenowits/nakamoto-coefficient-calculator/core/chains"
 )
 
 var conn *pgx.Conn
@@ -30,35 +21,11 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	// binance
-	UpdateChainInfo("BNB")
+	networks := []string{"BNB", "ATOM", "OSMO", "MATIC", "MINA", "SOL", "AVAX", "LUNA", "GRT", "RUNE"}
 
-	// cosmos
-	UpdateChainInfo("ATOM")
-
-	// osmosis
-	UpdateChainInfo("OSMO")
-
-	// polygon
-	UpdateChainInfo("MATIC")
-
-	// mina
-	UpdateChainInfo("MINA")
-
-	// solana
-	UpdateChainInfo("SOL")
-
-	// avalanche
-	UpdateChainInfo("AVAX")
-
-	// terra
-	UpdateChainInfo("LUNA")
-
-	// graph
-	UpdateChainInfo("GRT")
-
-	// thorchain
-	UpdateChainInfo("RUNE")
+	for _, n := range networks {
+		UpdateChainInfo(n)
+	}
 }
 
 func UpdateChainInfo(chain_token string) {
@@ -66,25 +33,25 @@ func UpdateChainInfo(chain_token string) {
 	var err error
 	switch chain_token {
 	case "BNB":
-		currVal, err = binance.Binance()
+		currVal, err = chains.Binance()
 	case "ATOM":
-		currVal, err = cosmos.Cosmos()
+		currVal, err = chains.Cosmos()
 	case "OSMO":
-		currVal, err = osmosis.Osmosis()
+		currVal, err = chains.Osmosis()
 	case "MATIC":
-		currVal, err = polygon.Polygon()
+		currVal, err = chains.Polygon()
 	case "MINA":
-		currVal, err = mina.Mina()
+		currVal, err = chains.Mina()
 	case "SOL":
-		currVal, err = solana.Solana()
+		currVal, err = chains.Solana()
 	case "AVAX":
-		currVal, err = avalanche.Avalanche()
+		currVal, err = chains.Avalanche()
 	case "LUNA":
-		currVal, err = terra.Terra()
+		currVal, err = chains.Terra()
 	case "GRT":
-		currVal, err = graph.Graph()
+		currVal, err = chains.Graph()
 	case "RUNE":
-		currVal, err = thorchain.Thorchain()
+		currVal, err = chains.Thorchain()
 	}
 
 	if err != nil {

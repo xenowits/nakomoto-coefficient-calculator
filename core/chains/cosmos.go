@@ -1,22 +1,16 @@
-package cosmos
+package chains
 
 import (
 	"encoding/json"
 	"fmt"
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/utils"
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
 )
 
-type Request struct {
-	height   int
-	page     int
-	per_page int
-}
-
-type Response struct {
+type CosmosResponse struct {
 	Jsonrpc string `json:"jsonrpc"`
 	Id      int    `json:"id"`
 	Result struct {
@@ -35,7 +29,7 @@ type Response struct {
 	} `json:"result"`
 }
 
-type ErrorResponse struct {
+type CosmosErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
@@ -50,7 +44,7 @@ func Cosmos() (int, error) {
 		resp, err := http.Get(url)
 		if err != nil {
 			errBody, _ := ioutil.ReadAll(resp.Body)
-			var errResp ErrorResponse
+			var errResp CosmosErrorResponse
 			json.Unmarshal(errBody, &errResp)
 			log.Println(errResp.Error)
 			return -1, nil
@@ -62,7 +56,7 @@ func Cosmos() (int, error) {
 			return -1, nil
 		}
 
-		var response Response
+		var response CosmosResponse
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			return -1, nil
