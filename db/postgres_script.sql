@@ -46,6 +46,8 @@ INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_c
 
 INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_co_curr_val) VALUES ('Thorchain', 'RUNE', -1, 10);
 
+INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_co_curr_val) VALUES ('Near', 'NEAR', -1, 6);
+
 select * from naka_coefficients;
 
 \q

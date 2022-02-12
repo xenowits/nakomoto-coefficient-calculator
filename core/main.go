@@ -16,22 +16,26 @@ func main() {
 	var err error
 	conn, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		fmt.Fprintln(os.Stderr, "Unable to connect to database", err)
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
 
-	networks := []string{"BNB", "ATOM", "OSMO", "MATIC", "MINA", "SOL", "AVAX", "LUNA", "GRT", "RUNE"}
+	defer func() {
+		if err := conn.Close(context.Background()); err != nil {
+			log.Println("failed to close database connection", err)
+		}
+	}()
 
+	networks := []string{"BNB", "ATOM", "OSMO", "MATIC", "MINA", "SOL", "AVAX", "LUNA", "GRT", "RUNE", "NEAR"}
 	for _, n := range networks {
 		UpdateChainInfo(n)
 	}
 }
 
-func UpdateChainInfo(chain_token string) {
-	prevVal, currVal := GetPrevVal(chain_token), 0
+func UpdateChainInfo(chainToken string) {
+	prevVal, currVal := getPrevVal(chainToken), 0
 	var err error
-	switch chain_token {
+	switch chainToken {
 	case "BNB":
 		currVal, err = chains.Binance()
 	case "ATOM":
@@ -52,33 +56,38 @@ func UpdateChainInfo(chain_token string) {
 		currVal, err = chains.Graph()
 	case "RUNE":
 		currVal, err = chains.Thorchain()
+	case "NEAR":
+		currVal, err = chains.Near()
 	}
 
 	if err != nil {
-		log.Println("Error occurred for", chain_token, err)
-	} else {
-		SaveUpdatedVals(currVal, prevVal, chain_token)
+		log.Println("failed to update chain info", chainToken, err)
+	}
+
+	if err := saveUpdatedVals(currVal, prevVal, chainToken); err != nil {
+		log.Println("failed to save updated values to database", chainToken, err)
 	}
 }
 
-// Query the database to get the previous (prior to updating it now) value of nakamoto coefficient for the given chain
-func GetPrevVal(chain_token string) int {
+// GetPrevVal queries the database to get the previous (prior to updating it now) value of nakamoto coefficient for the given chain
+// Assumes row for chain already exists in the table
+func getPrevVal(chainToken string) int {
 	queryStmt := `SELECT naka_co_curr_val from naka_coefficients WHERE chain_token=$1`
-	var naka_co_prev_val int
-	if err := conn.QueryRow(context.Background(), queryStmt, chain_token).Scan(&naka_co_prev_val); err == nil {
+	var nakaCoeffPrevVal int
+	if err := conn.QueryRow(context.Background(), queryStmt, chainToken).Scan(&nakaCoeffPrevVal); err == nil {
 	} else {
-		fmt.Println("Read unsuccessful for "+chain_token, err)
+		fmt.Println("Read unsuccessful", chainToken, err)
 		return -1
 	}
-	return naka_co_prev_val
+	return nakaCoeffPrevVal
 }
 
-// Save the recently calculated values back to the database
-func SaveUpdatedVals(curr_val int, prev_val int, chain_token string) error {
+// SaveUpdatedVals saves the recently calculated values back to the database
+func saveUpdatedVals(currVal int, prevVal int, chainToken string) error {
 	queryStmt := `UPDATE naka_coefficients SET naka_co_curr_val=$1, naka_co_prev_val=$2 WHERE chain_token=$3`
-	_, err := conn.Exec(context.Background(), queryStmt, curr_val, prev_val, chain_token)
+	_, err := conn.Exec(context.Background(), queryStmt, currVal, prevVal, chainToken)
 	if err != nil {
-		fmt.Println("Write unsuccessful for "+chain_token, err)
+		fmt.Println("Write unsuccessful for "+chainToken, err)
 	}
 	return err
 }
