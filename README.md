@@ -16,10 +16,10 @@ Golang
 2. Also, install [postgresql](https://www.postgresql.org/download/) and make sure it is running in the background
 3. After postgres is installed, copy the commands in `db/postgres_script.sql` into the terminal
 4. Add following to your `~/.bashrc` or `~/.zshrc`:
-    1. `export SOLANA_API_KEY=api_key`
-    2. `export DATABASE_URL=postgres://username:password@localhost:5432/postgres`
-4. In a separate terminal, run `go run core/main.go`. This will start the core logic of calculating the nakamoto coefficients.
-5. If you want to start the server, run `go run server/main.go` in another terminal.
+   1. `export SOLANA_API_KEY=api_key`
+   2. `export DATABASE_URL=postgres://username:password@localhost:5432/postgres`
+5. In a separate terminal, run `go run core/main.go`. This will start the core logic of calculating the nakamoto coefficients.
+6. If you want to start the server, run `go run server/main.go` in another terminal.
 
 ### Chains currently supported
 
@@ -33,11 +33,13 @@ Golang
 8. [Terra](https://www.terra.money/)
 9. [Graph Protocol](https://thegraph.com/)
 10. [Thorchain](https://www.thorchain.com/)
+11. [Near](https://near.org/)
+12. [Juno](https://www.junonetwork.io/)
 
 ### Notes
 
 1. The actual logic is present inside `/core`. So, ideally a cron job would be run after every `JOB_INTERVAL` which would save/refresh the nakamoto-coefficients `database`.
-3. The server code resides inside `/server`. It is a simple server which would only respond to `GET /nakamoto-coefficients`. It basically queries the database and returns the values.
+2. The server code resides inside `/server`. It is a simple server which would only respond to `GET /nakamoto-coefficients`. It basically queries the database and returns the values.
 
 ### Future Work
 

@@ -36,19 +36,17 @@ func reverse(numbers []float64) {
 }
 
 func Mina() (int, error) {
-	votingPowers := make([]float64, 0, 200)
+	votingPowers := make([]float64, 0, 1000)
 	pageNo, entriesPerPage := 0, 50
 	url := ""
 	for true {
 		// Check the most active url in the network logs here: https://mina.staketab.com/validators/stake 
 		// Sometimes it changes, like once it changed from mina.staketab.com to t-mina.staketab.com
-		url = fmt.Sprintf("https://t-mina.staketab.com:8181/api/validator/all/?page=%d&size=%d&sortBy=canonical_block&findStr=&orderBy=DESC", pageNo, entriesPerPage)
+		// Once, it was https://mina.staketab.com:8181/api/validator/all/
+		url = fmt.Sprintf("https://mina.staketab.com/mainnet/api/api/validators/?page=%d&size=%d&sortBy=canonical_block&findStr=&orderBy=DESC", pageNo, entriesPerPage)
 		resp, err := http.Get(url)
 		if err != nil {
-			errBody, _ := ioutil.ReadAll(resp.Body)
-			var errResp MinaErrorResponse
-			json.Unmarshal(errBody, &errResp)
-			log.Println(errResp.Error)
+			log.Println(err)
 			return -1, err
 		}
 		defer resp.Body.Close()
