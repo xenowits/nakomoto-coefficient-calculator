@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v4"
 	"log"
 	"os"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v4"
 )
 
 var conn *pgx.Conn
@@ -28,6 +29,7 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.GET("/nakamoto-coefficients", func(c *gin.Context) {
 		coefficients := getListOfCoefficients()
@@ -35,7 +37,7 @@ func main() {
 			"coefficients": coefficients,
 		})
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run(":8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
 func getListOfCoefficients() []JsonResponse {
