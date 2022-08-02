@@ -87,7 +87,7 @@ func Mina() (int, error) {
 }
 
 func calcNakamotoCoefficientForMina(votingPowers []float64) int {
-	var cumulativePercent, thresholdPercent float64 = 0.00, utils.THRESHOLD_PERCENT
+	var cumulativePercent, thresholdPercent float64 = 0.00, 50.00
 	nakamotoCoefficient := 0
 	for _, vpp := range votingPowers {
 		// since this is the  actual voting percentage, no need to multiply with 100
