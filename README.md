@@ -35,6 +35,8 @@ Golang
 10. [Thorchain](https://www.thorchain.com/)
 11. [Near](https://near.org/)
 12. [Juno](https://www.junonetwork.io/)
+13. [Ethereum 2](https://ethereum.org/)
+14. [Regen Network](https://www.regen.network/)
 
 ### Notes
 
