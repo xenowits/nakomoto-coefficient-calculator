@@ -37,6 +37,7 @@ Golang
 12. [Juno](https://www.junonetwork.io/)
 13. [Ethereum 2](https://ethereum.org/)
 14. [Regen Network](https://www.regen.network/)
+15. [Agoric](https://agoric.com/)
 
 ### Notes
 
