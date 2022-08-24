@@ -39,7 +39,7 @@ func UpdateChainInfo(chainToken string) {
 	case "BLD":
 		currVal, err = chains.Agoric()
 	case "ETH2":
-		currVal, err = chains.Ethereum2()
+		currVal, err = chains.Eth()
 	case "BNB":
 		currVal, err = chains.Binance()
 	case "ATOM":

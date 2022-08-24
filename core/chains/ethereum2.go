@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
-type Ethereum2Response struct {
+type Eth2Response struct {
 	Page struct {
 		From int `json:"from"`
 		Size int `json:"size"`
@@ -32,7 +31,7 @@ type Ethereum2Response struct {
 	} `json:"data"`
 }
 
-type Ethereum2ErrorResponse struct {
+type Eth2ErrorResponse struct {
 	Detail string `json:"detail"`
 }
 
@@ -42,7 +41,7 @@ type Ethereum2ErrorResponse struct {
 //
 // voting powers were not included as the api does not provide this metric
 // and the ui does not display it
-func Ethereum2() (int, error) {
+func Eth() (int, error) {
 	controllingPenetration := .33
 	cumulativePenetration := 0.0
 	nakamotoCoefficient := 1
@@ -52,9 +51,8 @@ func Ethereum2() (int, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp Ethereum2ErrorResponse
+		var errResp Eth2ErrorResponse
 		json.Unmarshal(errBody, &errResp)
-		log.Println(errResp.Detail)
 		return -1, err
 	}
 	defer resp.Body.Close()
@@ -64,7 +62,7 @@ func Ethereum2() (int, error) {
 		return -1, err
 	}
 
-	var response Ethereum2Response
+	var response Eth2Response
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return -1, err
@@ -80,7 +78,7 @@ func Ethereum2() (int, error) {
 		}
 	}
 
-	fmt.Println("The Nakamoto coeffiecient for ethereum2 is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coeffiecient for Eth2 is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }

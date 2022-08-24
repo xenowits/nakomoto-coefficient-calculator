@@ -74,7 +74,7 @@ func Juno() (int, error) {
 	totalVotingPower := utils.CalculateTotalVotingPower(votingPowers)
 	fmt.Println("Total voting power:", totalVotingPower)
 
-	// // now we're ready to calculate the nakomoto coefficient
+	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for juno is", nakamotoCoefficient)
 
