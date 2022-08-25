@@ -26,7 +26,7 @@ func main() {
 		}
 	}()
 
-	networks := []string{"BNB", "ATOM", "OSMO", "MATIC", "MINA", "SOL", "AVAX", "LUNA", "GRT", "RUNE", "NEAR", "JUNO"}
+	networks := []string{"BLD", "REGEN", "ETH", "BNB", "ATOM", "OSMO", "MATIC", "MINA", "SOL", "AVAX", "LUNA", "GRT", "RUNE", "NEAR", "JUNO"}
 	for _, n := range networks {
 		UpdateChainInfo(n)
 	}
@@ -36,6 +36,10 @@ func UpdateChainInfo(chainToken string) {
 	prevVal, currVal := getPrevVal(chainToken), 0
 	var err error
 	switch chainToken {
+	case "BLD":
+		currVal, err = chains.Agoric()
+	case "ETH2":
+		currVal, err = chains.Eth()
 	case "BNB":
 		currVal, err = chains.Binance()
 	case "ATOM":
@@ -60,6 +64,8 @@ func UpdateChainInfo(chainToken string) {
 		currVal, err = chains.Near()
 	case "JUNO":
 		currVal, err = chains.Juno()
+	case "REGEN":
+		currVal, err = chains.Regen()
 	}
 
 	if err != nil {

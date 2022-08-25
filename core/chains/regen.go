@@ -12,7 +12,7 @@ import (
 	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
-type JunoResponse struct {
+type RegenResponse struct {
 	Height string `json:"height"`
 	Result []struct {
 		OperatorAddress string `json:"operator_address"`
@@ -31,20 +31,20 @@ type JunoResponse struct {
 	} `json:"result"`
 }
 
-type JunoErrorResponse struct {
+type RegenErrorResponse struct {
 	Id      int    `json:"id"`
 	Jsonrpc string `json:"jsonrpc"`
 	Error   string `json:"error"`
 }
 
-func Juno() (int, error) {
+func Regen() (int, error) {
 	votingPowers := make([]int64, 0, 200)
 
-	url := fmt.Sprintf("https://lcd-juno.keplr.app/staking/validators")
+	url := fmt.Sprintf("https://lcd-regen.keplr.app/staking/validators")
 	resp, err := http.Get(url)
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp AgoricErrorResponse
+		var errResp RegenErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
 		return -1, err
@@ -56,7 +56,7 @@ func Juno() (int, error) {
 		return -1, err
 	}
 
-	var response AgoricResponse
+	var response RegenResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return -1, err
@@ -76,7 +76,7 @@ func Juno() (int, error) {
 
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
-	fmt.Println("The Nakamoto coefficient for juno is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for regen network is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
