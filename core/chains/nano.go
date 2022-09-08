@@ -106,7 +106,7 @@ func Nano() (int, error) {
 
 	needed := new(big.Int).Div(online, big.NewInt(3))
 
-	// Request the list of reps
+	// Request the list of representatives, which are what we call nano's validators (rep for short)
 	repsRes, err := nanoRequest[nanoRepsRequest, nanoRepsResponse](rpc, nanoRepsRequest{
 		Action:  "representatives",
 		Sorting: true,
