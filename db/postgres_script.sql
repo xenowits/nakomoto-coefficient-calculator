@@ -56,6 +56,8 @@ INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_c
 
 INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_co_curr_val) VALUES ('Agoric', 'BLD', -1, 0);
 
+INSERT INTO naka_coefficients (chain_name, chain_token, naka_co_prev_val, naka_co_curr_val) VALUES ('Nano', 'XNO', -1, 2);
+
 select * from naka_coefficients;
 
 \q

@@ -38,6 +38,7 @@ Golang
 13. [Ethereum 2](https://ethereum.org/)
 14. [Regen Network](https://www.regen.network/)
 15. [Agoric](https://agoric.com/)
+16. [Nano](https://nano.org/)
 
 ### Notes
 
