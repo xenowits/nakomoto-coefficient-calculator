@@ -38,7 +38,7 @@ type TerraErrorResponse struct {
 // https://fcd.terra.dev/swagger
 func Terra() (int, error) {
 	votingPowers := make([]int64, 0, 200)
-	url := fmt.Sprintf("https://fcd.terra.dev/validatorsets/latest")
+	url := fmt.Sprintf("https://phoenix-lcd.terra.dev/validatorsets/latest")
 	resp, err := http.Get(url)
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
