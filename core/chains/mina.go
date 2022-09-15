@@ -87,6 +87,7 @@ func Mina() (int, error) {
 }
 
 func calcNakamotoCoefficientForMina(votingPowers []float64) int {
+        // Mina uses Ouroboros which uses 50% of the total voting paper. Paper link: https://eprint.iacr.org/2017/573.pdf (Page 6)
 	var cumulativePercent, thresholdPercent float64 = 0.00, 50.00
 	nakamotoCoefficient := 0
 	for _, vpp := range votingPowers {
