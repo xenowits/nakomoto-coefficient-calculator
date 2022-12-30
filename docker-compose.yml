@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+#  ___  ___ _ ____   _____ _ __
+#  / __|/ _ \ '__\ \ / / _ \ '__|
+#  \__ \  __/ |   \ V /  __/ |
+#  |___/\___|_|    \_/ \___|_|
+
+  server:
+    image: xenowits/nc-calc:v0.1.0
+    # Add SOLANA_API_KEY in .env file
+    ports:
+      - 8080:8080
+    volumes:
+      - /Users/xenowits/myprojects/nakomoto-coefficient-calculator:/opt/xenowits
+    restart: on-failure
+
+#  __                 _                 _
+#  / _|_ __ ___  _ __ | |_ ___ _ __   __| |
+#  | |_| '__/ _ \| '_ \| __/ _ \ '_ \ / _` |
+#  |  _| | | (_) | | | | ||  __/ | | | (_| |
+#  |_| |_|  \___/|_| |_|\__\___|_| |_|\__,_|
+
+  frontend:
+    image: xenowits/nakamoto-coefficient-frontend:v0.1.0
+    ports:
+      - 3000:3000
+    environment:
+      SERVER_URL: http://server:8080
+    restart: on-failure

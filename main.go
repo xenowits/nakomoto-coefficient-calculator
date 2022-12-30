@@ -22,7 +22,7 @@ func main() {
 	chainState := chains.NewState()
 
 	// Run a goroutine which refreshes state after every interval.
-	ticker := time.NewTicker(1 * time.Minute)
+	ticker := time.NewTicker(6 * time.Hour)
 	quit := make(chan struct{})
 	defer close(quit)
 

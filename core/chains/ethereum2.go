@@ -78,7 +78,7 @@ func Eth2() (int, error) {
 		}
 	}
 
-	fmt.Println("The Nakamoto coeffiecient for Eth2 is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for Eth2 is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
