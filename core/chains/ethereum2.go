@@ -41,7 +41,7 @@ type Eth2ErrorResponse struct {
 //
 // voting powers were not included as the api does not provide this metric
 // and the ui does not display it
-func Eth() (int, error) {
+func Eth2() (int, error) {
 	controllingPenetration := .33
 	cumulativePenetration := 0.0
 	nakamotoCoefficient := 1

@@ -80,7 +80,7 @@ func Binance() (int, error) {
 
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := calcNakamotoCoefficient(votingPowers)
-	fmt.Println("The Nakamoto coefficient for binance chain is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for binance Chain is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
