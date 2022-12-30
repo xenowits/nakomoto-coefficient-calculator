@@ -50,25 +50,25 @@ func Mina() (int, error) {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 		if err != nil {
 			log.Println(err)
-			return -1, errors.New("create get request for mina")
+			return 0, errors.New("create get request for mina")
 		}
 
 		resp, err := new(http.Client).Do(req)
 		if err != nil {
 			log.Println(err)
-			return -1, errors.New("get request unsuccessful")
+			return 0, errors.New("get request unsuccessful")
 		}
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return -1, err
+			return 0, err
 		}
 		resp.Body.Close()
 
 		var response MinaResponse
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			return -1, err
+			return 0, err
 		}
 
 		// break if no more entries left

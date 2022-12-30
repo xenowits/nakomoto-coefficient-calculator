@@ -41,8 +41,8 @@ docker run --rm -v "$(pwd):/opt/xenowits" -p 8080:8080 xenowits/nc-calc:v0.1.0
 
 ### Notes
 
-The actual logic is present inside `/core`. So, ideally a cron job would be run after every `JOB_INTERVAL` which would save/refresh the nakamoto-coefficients `database`.
+The actual logic is present inside `/core`. A goroutine runs every 6 hours which updates the nakamoto coefficients for all the chains.
 
 ### Future Work
 
-To add support for multiple other chains in `/v1`
+To add support for multiple other chains in `/v1`.

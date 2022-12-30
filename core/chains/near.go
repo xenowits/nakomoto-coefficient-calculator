@@ -32,7 +32,7 @@ func Near() (int, error) {
 	// Create a new POST request using http
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonReqData))
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
@@ -51,25 +51,25 @@ func Near() (int, error) {
 	}
 
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	var response NearResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	// loop through the validators voting powers
 	for _, ele := range response.Result.Validators {
 		n, ok := new(big.Int).SetString(ele.Stake, 10)
 		if !ok {
-			return -1, fmt.Errorf("failed to parse string %s", ele.Stake)
+			return 0, fmt.Errorf("failed to parse string %s", ele.Stake)
 		}
 		votingPowers = append(votingPowers, *n)
 	}

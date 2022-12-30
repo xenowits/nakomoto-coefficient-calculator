@@ -47,19 +47,19 @@ func Solana() (int, error) {
 		var errResp SolanaErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
-		return -1, err
+		return 0, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	var response SolanaResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	// loop through the validators voting powers

@@ -10,7 +10,6 @@ import (
 	"log"
 	"math/big"
 	"net/http"
-	"os"
 	"sort"
 	"strconv"
 	"time"
@@ -26,24 +25,24 @@ func Cosmos() (int, error) {
 	var (
 		votingPowers []big.Int
 		response     cosmosResponse
-		// url          = "https://api.mintscan.io/v1/cosmos/validators"
-		err error
+		url          = "https://api.mintscan.io/v1/cosmos/validators"
+		err          error
 	)
 
-	// response, err = fetch(url)
-	// if err != nil {
-	// 	return 0, err
-	// }
-
-	buf, err := os.ReadFile("core/testdata/cosmos.txt")
+	response, err = fetch(url)
 	if err != nil {
 		return 0, err
 	}
 
-	err = json.Unmarshal(buf, &response)
-	if err != nil {
-		return -1, nil
-	}
+	// buf, err := os.ReadFile("core/testdata/cosmos.txt")
+	// if err != nil {
+	// 	return 0, err
+	// }
+
+	// err = json.Unmarshal(buf, &response)
+	// if err != nil {
+	// 	return 0, nil
+	// }
 
 	// loop through the validators voting powers
 	for _, ele := range response {

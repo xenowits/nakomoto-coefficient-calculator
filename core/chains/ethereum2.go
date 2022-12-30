@@ -53,19 +53,19 @@ func Eth2() (int, error) {
 		errBody, _ := ioutil.ReadAll(resp.Body)
 		var errResp Eth2ErrorResponse
 		json.Unmarshal(errBody, &errResp)
-		return -1, err
+		return 0, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	var response Eth2Response
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	// loop through operators and pull their network penetration
