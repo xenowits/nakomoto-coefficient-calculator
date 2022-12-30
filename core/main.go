@@ -26,7 +26,7 @@ func main() {
 		}
 	}()
 
-	networks := []string{"BLD", "REGEN", "ETH", "BNB", "ATOM", "OSMO", "MATIC", "MINA", "SOL", "AVAX", "LUNA", "GRT", "RUNE", "NEAR", "JUNO", "XNO"}
+	networks := []string{"BLD", "REGEN", "ETH2", "BNB", "ATOM", "OSMO", "MATIC", "MINA", "SOL", "AVAX", "LUNA", "GRT", "RUNE", "NEAR", "JUNO", "XNO"}
 	for _, n := range networks {
 		UpdateChainInfo(n)
 	}
@@ -68,6 +68,9 @@ func UpdateChainInfo(chainToken string) {
 		currVal, err = chains.Regen()
 	case "XNO":
 		currVal, err = chains.Nano()
+	default:
+		log.Printf("chain not found %s\n", chainToken)
+		return
 	}
 
 	if err != nil {
@@ -86,7 +89,7 @@ func getPrevVal(chainToken string) int {
 	var nakaCoeffPrevVal int
 	if err := conn.QueryRow(context.Background(), queryStmt, chainToken).Scan(&nakaCoeffPrevVal); err == nil {
 	} else {
-		fmt.Println("Read unsuccessful", chainToken, err)
+		log.Println("Read unsuccessful", chainToken, err)
 		return -1
 	}
 	return nakaCoeffPrevVal
@@ -97,7 +100,7 @@ func saveUpdatedVals(currVal int, prevVal int, chainToken string) error {
 	queryStmt := `UPDATE naka_coefficients SET naka_co_curr_val=$1, naka_co_prev_val=$2 WHERE chain_token=$3`
 	_, err := conn.Exec(context.Background(), queryStmt, currVal, prevVal, chainToken)
 	if err != nil {
-		fmt.Println("Write unsuccessful for "+chainToken, err)
+		log.Println("Write unsuccessful for "+chainToken, err)
 	}
 	return err
 }

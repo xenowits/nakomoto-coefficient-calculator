@@ -75,7 +75,7 @@ func nanoRequest[ReqType any, ResType any](url string, req ReqType) (*ResType, e
 }
 
 func Nano() (int, error) {
-	rpc := "http://localhost:7076"
+	rpc := "https://mynano.ninja/api/node"
 	richlist := "https://nano.nendly.com/nakamoto/richlist"
 
 	bigFromStr := func(value string) (*big.Int, error) {

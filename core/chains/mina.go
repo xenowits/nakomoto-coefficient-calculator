@@ -1,12 +1,15 @@
 package chains
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"sort"
+	"time"
 )
 
 type MinaResponse struct {
@@ -34,25 +37,33 @@ func reverse(numbers []float64) {
 }
 
 func Mina() (int, error) {
-	votingPowers := make([]float64, 0, 1000)
+	var votingPowers []float64
 	pageNo, entriesPerPage := 0, 50
 	url := ""
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancelFunc()
 	for true {
 		// Check the most active url in the network logs here: https://mina.staketab.com/validators/stake
 		// Sometimes it changes, like once it changed from mina.staketab.com to t-mina.staketab.com
 		// Once, it was https://mina.staketab.com:8181/api/validator/all/
-		url = fmt.Sprintf("https://mina.staketab.com/mainnet/api/api/validators/?page=%d&size=%d&sortBy=canonical_block&findStr=&orderBy=DESC", pageNo, entriesPerPage)
-		resp, err := http.Get(url)
+		url = fmt.Sprintf("https://minascan.io/mainnet/api/api/validators/?page=%d&size=%d&sortBy=amount_staked&type=active&findStr=&orderBy=DESC", pageNo, entriesPerPage)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 		if err != nil {
 			log.Println(err)
-			return -1, err
+			return -1, errors.New("create get request for mina")
 		}
-		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		resp, err := new(http.Client).Do(req)
+		if err != nil {
+			log.Println(err)
+			return -1, errors.New("get request unsuccessful")
+		}
+
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return -1, err
 		}
+		resp.Body.Close()
 
 		var response MinaResponse
 		err = json.Unmarshal(body, &response)
