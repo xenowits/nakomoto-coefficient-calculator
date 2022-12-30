@@ -33,6 +33,7 @@ func main() {
 	r := gin.Default()
 	r.GET("/nakamoto-coefficients", func(c *gin.Context) {
 		coefficients := getListOfCoefficients()
+		c.Header("Access-Control-Allow-Origin", "*")
 		c.JSON(200, gin.H{
 			"coefficients": coefficients,
 		})

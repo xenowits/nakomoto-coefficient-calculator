@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 	"sort"
-
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
 type MinaResponse struct {
@@ -40,7 +38,7 @@ func Mina() (int, error) {
 	pageNo, entriesPerPage := 0, 50
 	url := ""
 	for true {
-		// Check the most active url in the network logs here: https://mina.staketab.com/validators/stake 
+		// Check the most active url in the network logs here: https://mina.staketab.com/validators/stake
 		// Sometimes it changes, like once it changed from mina.staketab.com to t-mina.staketab.com
 		// Once, it was https://mina.staketab.com:8181/api/validator/all/
 		url = fmt.Sprintf("https://mina.staketab.com/mainnet/api/api/validators/?page=%d&size=%d&sortBy=canonical_block&findStr=&orderBy=DESC", pageNo, entriesPerPage)
@@ -87,7 +85,7 @@ func Mina() (int, error) {
 }
 
 func calcNakamotoCoefficientForMina(votingPowers []float64) int {
-        // Mina uses Ouroboros which uses 50% of the total voting paper. Paper link: https://eprint.iacr.org/2017/573.pdf (Page 6)
+	// Mina uses Ouroboros which uses 50% of the total voting paper. Paper link: https://eprint.iacr.org/2017/573.pdf (Page 6)
 	var cumulativePercent, thresholdPercent float64 = 0.00, 50.00
 	nakamotoCoefficient := 0
 	for _, vpp := range votingPowers {
