@@ -41,7 +41,7 @@ type Eth2ErrorResponse struct {
 //
 // voting powers were not included as the api does not provide this metric
 // and the ui does not display it
-func Eth() (int, error) {
+func Eth2() (int, error) {
 	controllingPenetration := .33
 	cumulativePenetration := 0.0
 	nakamotoCoefficient := 1
@@ -53,19 +53,19 @@ func Eth() (int, error) {
 		errBody, _ := ioutil.ReadAll(resp.Body)
 		var errResp Eth2ErrorResponse
 		json.Unmarshal(errBody, &errResp)
-		return -1, err
+		return 0, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	var response Eth2Response
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	// loop through operators and pull their network penetration
@@ -78,7 +78,7 @@ func Eth() (int, error) {
 		}
 	}
 
-	fmt.Println("The Nakamoto coeffiecient for Eth2 is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for Eth2 is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }

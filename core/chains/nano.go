@@ -75,7 +75,7 @@ func nanoRequest[ReqType any, ResType any](url string, req ReqType) (*ResType, e
 }
 
 func Nano() (int, error) {
-	rpc := "http://localhost:7076"
+	rpc := "https://mynano.ninja/api/node"
 	richlist := "https://nano.nendly.com/nakamoto/richlist"
 
 	bigFromStr := func(value string) (*big.Int, error) {
@@ -93,15 +93,15 @@ func Nano() (int, error) {
 
 	if onlineRes != nil && onlineRes.Error != "" {
 		log.Println(onlineRes.Error)
-		return -1, errors.New("failed to get online stake")
+		return 0, errors.New("failed to get online stake")
 	}
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	online, err := bigFromStr(onlineRes.OnlineStake)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	needed := new(big.Int).Div(online, big.NewInt(3))
@@ -115,17 +115,17 @@ func Nano() (int, error) {
 
 	if repsRes != nil && repsRes.Error != "" {
 		log.Println(repsRes.Error)
-		return -1, errors.New("failed to get the list of representatives")
+		return 0, errors.New("failed to get the list of representatives")
 	}
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	validators := make(map[string]*big.Int)
 	for validator, weight := range repsRes.Reps {
 		bigWeight, err := bigFromStr(weight)
 		if err != nil {
-			return -1, err
+			return 0, err
 		}
 
 		validators[validator] = bigWeight
@@ -136,10 +136,10 @@ func Nano() (int, error) {
 
 	if richRes != nil && richRes.Error != "" {
 		log.Println(richRes.Error)
-		return -1, errors.New("failed to get the list of representatives")
+		return 0, errors.New("failed to get the list of representatives")
 	}
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	// consider what would happen if high-value accounts moved their weights around
@@ -150,7 +150,7 @@ func Nano() (int, error) {
 		for _, account := range group.Accounts {
 			balance, err := bigFromStr(account.Balance)
 			if err != nil {
-				return -1, err
+				return 0, err
 			}
 
 			representative := account.Rep

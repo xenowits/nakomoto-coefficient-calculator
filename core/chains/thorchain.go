@@ -1,20 +1,23 @@
 package chains
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math/big"
 	"net/http"
 	"sort"
+	"time"
 
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
+	"github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
 type ThorchainResponse []struct {
 	NodeAddress string `json:"node_address"`
-	Bond        string `json:"bond"`
+	Bond        string `json:"total_bond"`
 	Status      string `json:"status"`
 }
 
@@ -26,35 +29,32 @@ type ThorchainErrorResponse struct {
 
 func Thorchain() (int, error) {
 	votingPowers := make([]big.Int, 0, 1000)
-	url := fmt.Sprintf("https://thornode.thorchain.info/thorchain/nodes")
-	resp, err := http.Get(url)
+	url := fmt.Sprintf("https://thornode.ninerealms.com/thorchain/nodes")
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancelFunc()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp ThorchainErrorResponse
-		json.Unmarshal(errBody, &errResp)
-		log.Println(errResp.Error)
-		return -1, nil
+		log.Println(err)
+		return 0, errors.New("create get request for thorchain")
+	}
+
+	resp, err := new(http.Client).Do(req)
+	if err != nil {
+		log.Println(err)
+		return 0, errors.New("get request unsuccessful")
 	}
 	defer resp.Body.Close()
 
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp ThorchainErrorResponse
-		json.Unmarshal(errBody, &errResp)
-		log.Println(errResp.Error)
-		return -1, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	var response ThorchainResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	// loop through the validators voting powers

@@ -46,19 +46,19 @@ func Binance() (int, error) {
 			var errResp BinanceErrorResponse
 			json.Unmarshal(errBody, &errResp)
 			log.Println(errResp.Error)
-			return -1, err
+			return 0, err
 		}
 		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return -1, err
+			return 0, err
 		}
 
 		var response BinanceResponse
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			return -1, err
+			return 0, err
 		}
 
 		// break if no more entries left
@@ -80,7 +80,7 @@ func Binance() (int, error) {
 
 	// now we're ready to calculate the nakomoto coefficient
 	nakamotoCoefficient := calcNakamotoCoefficient(votingPowers)
-	fmt.Println("The Nakamoto coefficient for binance chain is", nakamotoCoefficient)
+	fmt.Println("The Nakamoto coefficient for binance Chain is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
