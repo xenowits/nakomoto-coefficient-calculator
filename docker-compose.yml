@@ -7,7 +7,7 @@ services:
 #  |___/\___|_|    \_/ \___|_|
 
   server:
-    image: xenowits/nc-calc:v0.1.0
+    image: xenowits/nc-calc:v0.1.1
     environment:
       SOLANA_API_KEY: ${SOLANA_API_KEY}
     ports:
@@ -24,7 +24,7 @@ services:
 #  |_| |_|  \___/|_| |_|\__\___|_| |_|\__,_|
 
   frontend:
-    image: xenowits/nakamoto-coefficient-frontend:v0.1.0
+    image: xenowits/nakamoto-coefficient-frontend:v0.1.1
     ports:
       - 3000:3000
     environment:

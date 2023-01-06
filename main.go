@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/xenowits/nakamoto-coefficient-calculator/core/chains"
 	"log"
+	"sort"
 	"sync"
 	"time"
 )
@@ -48,7 +49,7 @@ func main() {
 	// Run server.
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-	r.GET("/nakamoto-coefficients", func(c *gin.Context) {
+	r.GET("/naka-coeffs", func(c *gin.Context) {
 		coefficients := getListOfCoefficients(chainState)
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.JSON(200, gin.H{
@@ -69,6 +70,14 @@ func getListOfCoefficients(state chains.ChainState) []JsonResponse {
 			Change:        chain.CurrNCVal - chain.PrevNCVal,
 		})
 	}
+
+	sort.Slice(coeffs, func(i, j int) bool {
+		if coeffs[i].ChainToken < coeffs[j].ChainToken {
+			return true
+		}
+
+		return false
+	})
 
 	return coeffs
 }
