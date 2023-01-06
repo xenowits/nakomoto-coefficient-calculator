@@ -15,17 +15,20 @@ import (
 	"time"
 )
 
-type cosmosResponse []struct {
-	TokenCount string `json:"tokens"`
+const BONDED = "BOND_STATUS_BONDED"
+
+type cosmosResponse struct {
+	Validators []struct {
+		Status string `json:"status"`
+		Tokens string `json:"tokens"`
+	} `json:"validators"`
 }
 
 func Cosmos() (int, error) {
-	// Note that the mintscan API is heavily rate-limited. So, try to keep requests to a minimum.
-	// For developer purposes, use testdata/cosmos.txt.
 	var (
 		votingPowers []big.Int
 		response     cosmosResponse
-		url          = "https://api.mintscan.io/v1/cosmos/validators"
+		url          = "https://cosmos.lcd.atomscan.com/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
 		err          error
 	)
 
@@ -34,19 +37,13 @@ func Cosmos() (int, error) {
 		return 0, err
 	}
 
-	// buf, err := os.ReadFile("core/testdata/cosmos.txt")
-	// if err != nil {
-	// 	return 0, err
-	// }
-
-	// err = json.Unmarshal(buf, &response)
-	// if err != nil {
-	// 	return 0, nil
-	// }
-
 	// loop through the validators voting powers
-	for _, ele := range response {
-		val, _ := strconv.Atoi(ele.TokenCount)
+	for _, ele := range response.Validators {
+		if ele.Status != BONDED {
+			continue
+		}
+
+		val, _ := strconv.Atoi(ele.Tokens)
 		votingPowers = append(votingPowers, *big.NewInt(int64(val)))
 	}
 
