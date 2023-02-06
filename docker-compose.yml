@@ -11,7 +11,7 @@ services:
     environment:
       SOLANA_API_KEY: ${SOLANA_API_KEY}
     ports:
-      - 8080:8080
+      - "8080:8080"
     networks: [nc]
     volumes:
       - ${MOUNT_PATH}:/opt/xenowits
@@ -26,7 +26,7 @@ services:
   frontend:
     image: xenowits/nakamoto-coefficient-frontend:v0.1.1
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
       SERVER_URL: http://server:8080
     networks: [nc]
