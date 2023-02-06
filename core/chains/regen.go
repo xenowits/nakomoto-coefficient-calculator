@@ -3,55 +3,31 @@ package chains
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
+	"io"
 	"log"
+	"math/big"
 	"net/http"
 	"sort"
-	"strconv"
-
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
 type RegenResponse struct {
-	Height string `json:"height"`
-	Result []struct {
-		OperatorAddress string `json:"operator_address"`
-		ConsensusPubkey struct {
-			Type  string `json:"type"`
-			Value string `json:"value"`
-		} `json:"consensus_pubkey"`
-		Tokens      string `json:"tokens"`
-		Description struct {
-			Moniker         string `json:"moniker"`
-			Identity        string `json:"identity"`
-			Website         string `json:"website"`
-			SecurityContact string `json:"security_contact"`
-			Details         string `json:"details"`
-		} `json:"description"`
-	} `json:"result"`
-}
-
-type RegenErrorResponse struct {
-	Id      int    `json:"id"`
-	Jsonrpc string `json:"jsonrpc"`
-	Error   string `json:"error"`
+	Data []struct {
+		Tokens int64 `json:"tokens"`
+	} `json:"data"`
 }
 
 func Regen() (int, error) {
-	votingPowers := make([]int64, 0, 200)
+	const url = "https://api.regen.aneka.io/validators/details/all"
 
-	url := fmt.Sprintf("https://lcd-regen.keplr.app/staking/validators")
 	resp, err := http.Get(url)
 	if err != nil {
-		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp RegenErrorResponse
-		json.Unmarshal(errBody, &errResp)
-		log.Println(errResp.Error)
+		log.Println(err)
 		return 0, err
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return 0, err
 	}
@@ -62,20 +38,26 @@ func Regen() (int, error) {
 		return 0, err
 	}
 
-	// loop through the validators voting powers
-	for _, ele := range response.Result {
-		val, _ := strconv.Atoi(ele.Tokens)
-		votingPowers = append(votingPowers, int64(val))
+	// Loop through the validators voting powers.
+	var votingPowers []big.Int
+	for _, ele := range response.Data {
+		votingPowers = append(votingPowers, *big.NewInt(ele.Tokens))
 	}
 
-	// need to sort the powers in descending order since they are in random order
-	sort.Slice(votingPowers, func(i, j int) bool { return votingPowers[i] > votingPowers[j] })
+	// Need to sort the powers in descending order since they maybe in random order.
+	sort.Slice(votingPowers, func(i, j int) bool {
+		res := (&votingPowers[i]).Cmp(&votingPowers[j])
+		if res == 1 {
+			return true
+		}
+		return false
+	})
 
-	totalVotingPower := utils.CalculateTotalVotingPower(votingPowers)
-	fmt.Println("Total voting power:", totalVotingPower)
+	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
+	fmt.Println("Total voting power:", new(big.Float).SetInt(totalVotingPower))
 
-	// now we're ready to calculate the nakomoto coefficient
-	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
+	// now we're ready to calculate the nakamoto coefficient
+	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for regen network is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil

@@ -3,7 +3,7 @@ package chains
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math/big"
 	"net/http"
@@ -16,42 +16,32 @@ import (
 type SolanaResponse []struct {
 	Name         string `json:"name"`
 	Account      string `json:"keybase_id"`
-	Active_stake int    `json:"active_stake"`
+	Active_stake int64  `json:"active_stake"`
 	Delinquent   bool   `json:"delinquent"`
 }
 
-type SolanaErrorResponse struct {
-	Id      int    `json:"id"`
-	Jsonrpc string `json:"jsonrpc"`
-	Error   string `json:"error"`
-}
-
 func Solana() (int, error) {
-	votingPowers := make([]big.Int, 0, 200)
-
 	url := fmt.Sprintf("https://www.validators.app/api/v1/validators/mainnet.json")
+
+	var votingPowers []big.Int
 
 	// Create a new request using http
 	req, err := http.NewRequest("GET", url, nil)
 
-	// add authorization header to the req
-	// NOTE: get your own API_KEY from https://www.validators.app/api-documentation
+	// Add authorization header to the request
+	// NOTE: You can get your own API_KEY from https://www.validators.app/api-documentation
 	req.Header.Add("Token", os.Getenv("SOLANA_API_KEY"))
 
 	// Send req using http Client
 	client := &http.Client{}
 	resp, err := client.Do(req)
-
 	if err != nil {
-		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp SolanaErrorResponse
-		json.Unmarshal(errBody, &errResp)
-		log.Println(errResp.Error)
+		log.Println(err)
 		return 0, err
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return 0, err
 	}
@@ -64,7 +54,7 @@ func Solana() (int, error) {
 
 	// loop through the validators voting powers
 	for _, ele := range response {
-		votingPowers = append(votingPowers, *big.NewInt(int64(ele.Active_stake)))
+		votingPowers = append(votingPowers, *big.NewInt(ele.Active_stake))
 	}
 
 	// need to sort the powers in descending order since they are in random order
