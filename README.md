@@ -17,8 +17,10 @@ docker build . --platform=linux/amd64 -t xenowits/nc-calc:v0.1.0
 ```
 2. Run the image
 ```shell
-docker run --rm -v "$(pwd):/opt/xenowits" -p 8080:8080 xenowits/nc-calc:v0.1.0
+docker run --rm -e "SOLANA_API_KEY=<YOUR_API_KEY_HERE>" -p 8080:8080 xenowits/nc-calc:v0.1.0
 ```
+
+NOTE: You can get your API Key by signing up [here](https://www.validators.app/users/sign_up?locale=en&network=mainnet).
 
 ### Chains currently supported
 
