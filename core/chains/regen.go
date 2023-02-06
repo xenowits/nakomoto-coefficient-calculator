@@ -11,7 +11,7 @@ import (
 	"sort"
 )
 
-type RegenResponseNew struct {
+type RegenResponse struct {
 	Data []struct {
 		Tokens int64 `json:"tokens"`
 	} `json:"data"`
@@ -32,7 +32,7 @@ func Regen() (int, error) {
 		return 0, err
 	}
 
-	var response RegenResponseNew
+	var response RegenResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return 0, err
