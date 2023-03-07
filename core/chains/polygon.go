@@ -1,59 +1,48 @@
 package chains
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"sort"
+	"time"
 
 	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
 type PolygonResponse struct {
-	Height string `json:"height"`
-	Result struct {
-		Block_height string
-		Validators   []struct {
-			ID         int    `json:"id"`
-			StartEpoch int    `json:"startEpoch"`
-			EndEpoch   int    `json:"endEpoch"`
-			Nonce      int    `json:"nonce"`
-			Power      int64  `json:"power"`
-			PubKey     string `json:"pubKey"`
-			Signer     string `json:"signer"`
-			Jailed     bool   `json:"jailed"`
-		} `json:"validators"`
-		Count string `json:"count"`
-		Total string `json:"total"`
-	} `json:"result"`
-}
-
-type PolygonErrorResponse struct {
-	Id      int    `json:"id"`
-	Jsonrpc string `json:"jsonrpc"`
-	Error   string `json:"error"`
+	List []struct {
+		TotalStaked int64 `json:"totalStaked"`
+	} `json:"list"`
 }
 
 func Polygon() (int, error) {
-	votingPowers := make([]int64, 0, 200)
+	var votingPowers []int64
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancelFunc()
 
-	url := fmt.Sprintf("https://heimdall.api.matic.network/staking/validator-set")
-	resp, err := http.Get(url)
+	url := fmt.Sprintf("https://validator.info/api/polygon/validators?timeframe=week&nameContains=&activeValidators=true")
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp PolygonErrorResponse
-		json.Unmarshal(errBody, &errResp)
-		log.Println(errResp.Error)
+		log.Println(err)
+		return 0, errors.New("create get request for polygon")
+	}
+
+	resp, err := new(http.Client).Do(req)
+	if err != nil {
+		log.Println(err)
+		return 0, errors.New("get request unsuccessful")
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
 		return 0, err
 	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
+	resp.Body.Close()
 
 	var response PolygonResponse
 	err = json.Unmarshal(body, &response)
@@ -61,18 +50,18 @@ func Polygon() (int, error) {
 		return 0, err
 	}
 
-	// loop through the validators voting powers
-	for _, ele := range response.Result.Validators {
-		votingPowers = append(votingPowers, int64(ele.Power))
+	// Loop through the validators staked amounts
+	for _, ele := range response.List {
+		votingPowers = append(votingPowers, ele.TotalStaked)
 	}
 
-	// need to sort the powers in descending order since they are in random order
+	// Sort the voting powers in descending order since they maybe in random order.
 	sort.Slice(votingPowers, func(i, j int) bool { return votingPowers[i] > votingPowers[j] })
 
 	totalVotingPower := utils.CalculateTotalVotingPower(votingPowers)
 	fmt.Println("Total voting power:", totalVotingPower)
 
-	// // now we're ready to calculate the nakomoto coefficient
+	// Now we're ready to calculate the nakamoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for 0xPolygon is", nakamotoCoefficient)
 
