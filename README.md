@@ -13,11 +13,14 @@ Golang
 ### Steps to run
 1. Build docker image
 ```shell
-docker build . --platform=linux/amd64 -t xenowits/nc-calc:v0.1.0
+docker build . --platform=linux/amd64 -t xenowits/nc-calc:v0.1.4
 ```
 2. Run the image
 ```shell
-docker run --rm -e "SOLANA_API_KEY=<YOUR_API_KEY_HERE>" -p 8080:8080 xenowits/nc-calc:v0.1.0
+docker run --rm \
+-e "SOLANA_API_KEY=<YOUR_SOLANA_API_KEY_HERE>" \
+-e "RATED_API_KEY=<YOUR_RATED_API_KEY_HERE>" \
+-p 8080:8080 xenowits/nc-calc:v0.1.4
 ```
 
 NOTE: You can get your API Key by signing up [here](https://www.validators.app/users/sign_up?locale=en&network=mainnet).
