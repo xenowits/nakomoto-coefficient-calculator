@@ -28,7 +28,7 @@ func Cosmos() (int, error) {
 	var (
 		votingPowers []big.Int
 		response     cosmosResponse
-		url          = "https://cosmos.lcd.atomscan.com/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
+		url          = "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
 		err          error
 	)
 

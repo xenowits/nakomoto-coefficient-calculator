@@ -52,6 +52,7 @@ func Eth2() (int, error) {
 		log.Println(err)
 		return 0, errors.New("get request unsuccessful")
 	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
