@@ -6,6 +6,8 @@ The aim of this project is to calculate the nakamoto coefficients for various po
 
 [Nakamoto coefficient](https://news.earn.com/quantifying-decentralization-e39db233c28e) is a way to calculate the level of decentralization in a particular chain.
 
+Read this amazing [messari report](https://messari.io/report/evaluating-validator-decentralization-geographic-and-infrastructure-distribution-in-proof-of-stake-networks) on operational decentralization of Proof-of-stake networks.
+
 #### Disclaimer
 
 Please note that the values should be interpreted with context since the same objective treatment is applied for all the chains included here, ie,
