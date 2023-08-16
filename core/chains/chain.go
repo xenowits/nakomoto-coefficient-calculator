@@ -1,7 +1,6 @@
 package chains
 
 import (
-	"errors"
 	"fmt"
 	"log"
 )
@@ -36,6 +35,7 @@ const (
 	REGEN Token = "REGEN"
 	RUNE  Token = "RUNE"
 	SOL   Token = "SOL"
+	STARS Token = "STARS"
 	XNO   Token = "XNO"
 )
 
@@ -72,6 +72,8 @@ func (t Token) ChainName() string {
 		return "Thorchain"
 	case SOL:
 		return "Solana"
+	case STARS:
+		return "Stargaze"
 	case XNO:
 		return "Nano"
 	default:
@@ -79,7 +81,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, REGEN, RUNE, SOL, XNO}
+var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, REGEN, RUNE, SOL, STARS, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -143,10 +145,12 @@ func newValues(token Token) (int, error) {
 		currVal, err = Thorchain()
 	case SOL:
 		currVal, err = Solana()
+	case STARS:
+		currVal, err = Stargaze()
 	case XNO:
 		currVal, err = Nano()
 	default:
-		return 0, errors.New(fmt.Sprintf("chain not found %s\n", token))
+		return 0, fmt.Errorf("chain not found %s", token)
 	}
 
 	return currVal, err

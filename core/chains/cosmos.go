@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 	"io"
 	"log"
 	"math/big"
@@ -13,6 +12,8 @@ import (
 	"sort"
 	"strconv"
 	"time"
+
+	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
 const BONDED = "BOND_STATUS_BONDED"
@@ -25,16 +26,20 @@ type cosmosResponse struct {
 }
 
 func Cosmos() (int, error) {
+	url := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
+	return fetchCosmosSDKNakamotoCoefficient("cosmos", url)
+}
+
+func fetchCosmosSDKNakamotoCoefficient(chainName, url string) (int, error) {
 	var (
 		votingPowers []big.Int
 		response     cosmosResponse
-		url          = "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
 		err          error
 	)
 
 	response, err = fetch(url)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to fetch data for %s: %w", chainName, err)
 	}
 
 	// loop through the validators voting powers
@@ -50,10 +55,7 @@ func Cosmos() (int, error) {
 	// Sort the powers in descending order since they maybe in random order
 	sort.Slice(votingPowers, func(i, j int) bool {
 		res := (&votingPowers[i]).Cmp(&votingPowers[j])
-		if res == 1 {
-			return true
-		}
-		return false
+		return res == 1
 	})
 
 	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
@@ -61,11 +63,10 @@ func Cosmos() (int, error) {
 
 	// Now we're ready to calculate the nakamoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
-	fmt.Println("The Nakamoto coefficient for cosmos is", nakamotoCoefficient)
+	fmt.Printf("The Nakamoto coefficient for %s is %d\n", chainName, nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
-
 func fetch(url string) (cosmosResponse, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
