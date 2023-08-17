@@ -27,10 +27,11 @@ type cosmosResponse struct {
 
 func Cosmos() (int, error) {
 	url := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
-	return fetchCosmosSDKNakamotoCoefficient("cosmos", url)
+	return fetchCosmosSDKNakaCoeff("cosmos", url)
 }
 
-func fetchCosmosSDKNakamotoCoefficient(chainName, url string) (int, error) {
+// fetchCosmosSDKNakaCoeff returns the nakamoto coefficient for the provided cosmos SDK-based chain using the provided url.
+func fetchCosmosSDKNakaCoeff(chainName, url string) (int, error) {
 	var (
 		votingPowers []big.Int
 		response     cosmosResponse
