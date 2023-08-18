@@ -55,6 +55,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 14. [Regen Network](https://www.regen.network/)
 15. [Agoric](https://agoric.com/)
 16. [Nano](https://nano.org/)
+17. [Stargaze](https://stargaze.zone/)
 
 ### Notes
 
