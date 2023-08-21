@@ -26,7 +26,6 @@ type HederaResponse struct {
 }
 
 func Hedera() (int, error){
-
 	// Set base url for requests.
 	var base = "https://mainnet-public.mirrornode.hedera.com"
 	var query = "/api/v1/network/nodes"
