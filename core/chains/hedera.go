@@ -27,19 +27,19 @@ type HederaResponse struct {
 
 func Hedera() (int, error){
 
-	// set base url for requests
+	// Set base url for requests.
 	var base = "https://mainnet-public.mirrornode.hedera.com"
 	var query = "/api/v1/network/nodes"
 
-	// declare variable for tracking votes for each node
+	// Declare variable for tracking votes for each node.
 	var votingPowers []big.Int
 
-	// declare variables for tracking pagination
+	// Declare variables for tracking pagination.
 	var page = ""
 
-	//loop over api responses for all pages
+	// Loop over api responses for all pages.
 	for {
-		//get response from api
+		// Get response from API.
 		resp, err := http.Get(base + query)
 		if err != nil {
 			fmt.Println(err)
@@ -47,7 +47,7 @@ func Hedera() (int, error){
 		}
 		defer resp.Body.Close()
 
-		//decode json response to go objects
+		// Decode json response to go objects.
 		var response HederaResponse
 		err = json.NewDecoder(resp.Body).Decode(&response)
 		if err != nil {
@@ -55,32 +55,32 @@ func Hedera() (int, error){
 			return 0, err
 		}
 		
-		// append node votes to array (from response)
+		// Append node votes to array (from response).
 		for _, node := range response.Nodes {
-			votingPowers = append(votingPowers, *big.NewInt(node.Stake/100000000)) //convert tinybar to hbar
+			votingPowers = append(votingPowers, *big.NewInt(node.Stake/100000000)) // Convert tinybar to hbar.
 		}
 
-		// assign next page of results to parse (null if empty, otherwise string)
+		// Assign next page of results to parse (null if empty, otherwise string).
 		page = response.Links.Next
 
-		// break loop where there is no more data
+		// Break loop where there is no more data.
 		if page == "" || page == "null" { break }
 
-		//assign new query to api call and reset page variable
+		// Assign new query to api call and reset page variable.
 		query = page
 		page = ""
 	}
 
-	// sort the node votes in descending order
+	// Sort the node votes in descending order.
 	sort.Slice(votingPowers, func(i, j int) bool {
 		return (&votingPowers[i]).Cmp(&votingPowers[j]) == 1
 	})	
 
-	// calculate the total voting power
+	// Calculate the total voting power.
 	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
 	fmt.Println("Total voting power for Hedera is:", new(big.Float).SetInt(totalVotingPower))
 
-	// now we're ready to calculate the nakomoto coefficient
+	// Now we're ready to calculate the nakomoto coefficient.
 	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
 	fmt.Println("The Nakamoto coefficient for Hedera is", nakamotoCoefficient)
 
