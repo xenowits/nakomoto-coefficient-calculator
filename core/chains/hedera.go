@@ -27,7 +27,7 @@ type HederaResponse struct {
 
 func Hedera() (int, error){
 	// Set base url for requests.
-	var base = "https://mainnet-public.mirrornode.hedera.com"
+	var baseURL = "https://mainnet-public.mirrornode.hedera.com"
 	var query = "/api/v1/network/nodes"
 
 	// Declare variable for tracking votes for each node.
@@ -39,7 +39,7 @@ func Hedera() (int, error){
 	// Loop over api responses for all pages.
 	for {
 		// Get response from API.
-		resp, err := http.Get(base + query)
+		resp, err := http.Get(baseURL + query)
 		if err != nil {
 			fmt.Println(err)
 			return 0, err
