@@ -10,6 +10,8 @@ import (
 	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
+const TinyToHbar = 100_000_000 // Tinybar to Hbar.
+
 type Node []struct {
 	Description     string `json:"description"`
 	Node_Account    string `json:"node_account_id"`
@@ -56,7 +58,7 @@ func Hedera() (int, error){
 		
 		// Append node votes to array (from response).
 		for _, node := range response.Nodes {
-			votingPowers = append(votingPowers, *big.NewInt(node.Stake/100000000)) // Convert tinybar to hbar.
+			votingPowers = append(votingPowers, *big.NewInt(node.Stake/TinyToHbar)) // Convert tinybar to hbar.
 		}
 
 		// Assign next page of results to parse (null if empty, otherwise string).
