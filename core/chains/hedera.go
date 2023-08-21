@@ -39,7 +39,7 @@ func Hedera() (int, error){
 	// Loop over api responses for all pages.
 	for {
 		// Get response from API.
-		resp, err := http.Get(baseURL + query)
+		resp, err := http.Get(fmt.Sprintf("%s%s", baseURL, query))
 		if err != nil {
 			fmt.Println(err)
 			return 0, err
