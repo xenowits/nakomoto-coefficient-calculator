@@ -26,6 +26,7 @@ const (
 	BNB   Token = "BNB"
 	ETH2  Token = "ETH2"
 	GRT   Token = "GRT"
+	HBAR  Token = "HBAR"
 	JUNO  Token = "JUNO"
 	LUNA  Token = "LUNA" // TODO(xenowits): Remove terra Chain from codebase
 	MATIC Token = "MATIC"
@@ -54,6 +55,8 @@ func (t Token) ChainName() string {
 		return "Ethereum Proof-of-Stake"
 	case GRT:
 		return "Graph Protocol"
+	case HBAR:
+		return "Hedera"
 	case JUNO:
 		return "Juno"
 	case LUNA:
@@ -81,7 +84,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, REGEN, RUNE, SOL, STARS, XNO}
+var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, HBAR, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, REGEN, RUNE, SOL, STARS, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -127,6 +130,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Eth2()
 	case GRT:
 		currVal, err = Graph()
+	case HBAR:
+		currVal, err = Hedera()
 	case JUNO:
 		currVal, err = Juno()
 	case LUNA:
