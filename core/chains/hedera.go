@@ -15,7 +15,7 @@ const TinyToHbar = 100_000_000 // Tinybar to Hbar.
 type Node []struct {
 	Description     string `json:"description"`
 	Node_Account    string `json:"node_account_id"`
-	Stake 			int64  `json:"stake"`
+	Stake           int64  `json:"stake"`
 }
 
 type Link struct{
@@ -65,7 +65,9 @@ func Hedera() (int, error){
 		page = response.Links.Next
 
 		// Break loop where there is no more data.
-		if page == "" || page == "null" { break }
+		if page == "" || page == "null" { 
+			break 
+		}
 
 		// Assign new query to api call and reset page variable.
 		query = page
