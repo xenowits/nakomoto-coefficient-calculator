@@ -57,11 +57,14 @@ func fetchDataSUI(chainName string, url string, request rawBody) (int, error) {
 	// Sui has voting power indicator for each validator.
 	// Total is 10000==100%
 	for _, ele := range response.Result.ActiveValidators {
-		votingPower, _ := strconv.ParseInt(ele.VotingPower, 10, 64)
+		votingPower, err := strconv.ParseInt(ele.VotingPower, 10, 64)
+		if err != nil {
+			log.Println(err)
+		}
+
 		votingPowers = append(votingPowers, *big.NewInt(votingPower))
 	}
 
-	//sort
 	sort.Slice(votingPowers, func(i, j int) bool {
 		return votingPowers[i].Cmp(&votingPowers[j]) > 0
 	})
@@ -69,7 +72,7 @@ func fetchDataSUI(chainName string, url string, request rawBody) (int, error) {
 	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
 	fmt.Printf("Total voting power for %s: %s\n", chainName, new(big.Float).SetInt(totalVotingPower).String())
 
-	// now we're ready to calculate the nakomoto coefficient
+	// Now we're ready to calculate the nakomoto coefficient.
 	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
 	fmt.Printf("The Nakamoto coefficient for %s is %d\n", chainName, nakamotoCoefficient)
 
