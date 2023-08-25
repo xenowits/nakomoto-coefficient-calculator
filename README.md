@@ -57,6 +57,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 16. [Nano](https://nano.org/)
 17. [Stargaze](https://stargaze.zone/)
 18. [Hedera](https://hedera.com/)
+19. [Sui](https://sui.io/)
 
 ### Notes
 
