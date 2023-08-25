@@ -45,6 +45,8 @@ func Sui() (int, error) {
 	return fetchDataSUI("sui", baseURL, request)
 }
 
+// fetchDataSUI returns the nakamoto coefficient value for SUI by fetching sui validator voting powers
+// and calculating NC value from the data.
 func fetchDataSUI(chainName string, url string, request rawBody) (int, error) {
 	var votingPowers []big.Int
 
