@@ -37,6 +37,7 @@ const (
 	RUNE  Token = "RUNE"
 	SOL   Token = "SOL"
 	STARS Token = "STARS"
+	SUI   Token = "SUI"
 	XNO   Token = "XNO"
 )
 
@@ -77,6 +78,8 @@ func (t Token) ChainName() string {
 		return "Solana"
 	case STARS:
 		return "Stargaze"
+	case SUI:
+		return "Sui Protocol"
 	case XNO:
 		return "Nano"
 	default:
@@ -84,7 +87,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, HBAR, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, REGEN, RUNE, SOL, STARS, XNO}
+var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, HBAR, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, REGEN, RUNE, SOL, STARS, SUI, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -152,6 +155,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Solana()
 	case STARS:
 		currVal, err = Stargaze()
+	case SUI:
+		currVal, err = Sui()
 	case XNO:
 		currVal, err = Nano()
 	default:
