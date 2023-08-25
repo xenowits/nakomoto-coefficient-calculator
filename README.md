@@ -4,30 +4,39 @@
 
 The aim of this project is to calculate the nakamoto coefficients for various popular blockchains.
 
-[Nakamoto coefficient](https://news.earn.com/quantifying-decentralization-e39db233c28e) is a way to calculate the level of decentralization in a particular chain.
+[Nakamoto coefficient](https://news.earn.com/quantifying-decentralization-e39db233c28e) is a way to calculate the level
+of decentralization in a particular chain.
 
-Read this amazing [messari report](https://messari.io/report/evaluating-validator-decentralization-geographic-and-infrastructure-distribution-in-proof-of-stake-networks) on operational decentralization of Proof-of-stake networks.
+Read this amazing
+[messari report](https://messari.io/report/evaluating-validator-decentralization-geographic-and-infrastructure-distribution-in-proof-of-stake-networks)
+on operational decentralization of Proof-of-stake networks.
 
 #### Disclaimer
 
-Please note that the values should be interpreted with context since the same objective treatment is applied for all the chains included here, ie,
-we simply calculate:
+Please note that the values should be interpreted with context since the same objective treatment is applied for all the
+chains included here, ie, we simply calculate:
+
 ```markdown
 nakamoto-coefficient: no of validators controlling 33% of the total network stake
 ```
 
-So, I would suggest users to understand the context, cross-verify and examine the results. For any feedback, please join this [discord](https://discord.gg/Una8qmFg).
+So, I would suggest users to understand the context, cross-verify and examine the results. For any feedback, please join
+this [discord](https://discord.gg/Una8qmFg).
 
 ### Programming Languages
 
 Golang
 
 ### Steps to run
+
 1. Build docker image
+
 ```shell
 docker build . --platform=linux/amd64 -t xenowits/nc-calc:v0.1.4
 ```
+
 2. Run the image
+
 ```shell
 docker run --rm \
 -e "SOLANA_API_KEY=<YOUR_SOLANA_API_KEY_HERE>" \
@@ -57,10 +66,12 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 16. [Nano](https://nano.org/)
 17. [Stargaze](https://stargaze.zone/)
 18. [Hedera](https://hedera.com/)
+19. [Sui](https://sui.io/)
 
 ### Notes
 
-The actual logic is present inside `/core`. A goroutine runs every 6 hours which updates the nakamoto coefficients for all the chains.
+The actual logic is present inside `/core`. A goroutine runs every 6 hours which updates the nakamoto coefficients for
+all the chains.
 
 ### Future Work
 
