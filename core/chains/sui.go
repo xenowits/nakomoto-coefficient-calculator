@@ -40,12 +40,12 @@ func Sui() (int, error) {
 		Params:  []interface{}{},
 	}
 
-	url := "https://fullnode.mainnet.sui.io"
+	baseURL := "https://fullnode.mainnet.sui.io"
 
-	return FetchDataSUI("sui", url, request)
+	return FetchDataSUI("sui", baseURL, request)
 }
 
-func FetchDataSUI(chainName string, url string, request rawBody) (int, error) {
+func fetchDataSUI(chainName string, url string, request rawBody) (int, error) {
 	var votingPowers []big.Int
 
 	response, err := fetchData(url, request)
@@ -53,7 +53,8 @@ func FetchDataSUI(chainName string, url string, request rawBody) (int, error) {
 		return 0, fmt.Errorf("failed to fetch data for %s: %w", chainName, err)
 	}
 
-	// loop through the validators voting powers, sui has voting power indicator for each validator
+	// Loop through the validators voting powers.
+	// Sui has voting power indicator for each validator.
 	// Total is 10000==100%
 	for _, ele := range response.Result.ActiveValidators {
 		votingPower, _ := strconv.ParseInt(ele.VotingPower, 10, 64)
