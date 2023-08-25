@@ -42,7 +42,7 @@ func Sui() (int, error) {
 
 	baseURL := "https://fullnode.mainnet.sui.io"
 
-	return FetchDataSUI("sui", baseURL, request)
+	return fetchDataSUI("sui", baseURL, request)
 }
 
 func fetchDataSUI(chainName string, url string, request rawBody) (int, error) {
