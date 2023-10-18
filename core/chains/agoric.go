@@ -3,7 +3,7 @@ package chains
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"sort"
@@ -13,21 +13,8 @@ import (
 )
 
 type AgoricResponse struct {
-	Height string `json:"height"`
 	Result []struct {
-		OperatorAddress string `json:"operator_address"`
-		ConsensusPubkey struct {
-			Type  string `json:"type"`
-			Value string `json:"value"`
-		} `json:"consensus_pubkey"`
 		Tokens      string `json:"tokens"`
-		Description struct {
-			Moniker         string `json:"moniker"`
-			Identity        string `json:"identity"`
-			Website         string `json:"website"`
-			SecurityContact string `json:"security_contact"`
-			Details         string `json:"details"`
-		} `json:"description"`
 	} `json:"result"`
 }
 
@@ -43,7 +30,7 @@ func Agoric() (int, error) {
 	url := fmt.Sprintf("https://lcd-agoric.keplr.app/staking/validators")
 	resp, err := http.Get(url)
 	if err != nil {
-		errBody, _ := ioutil.ReadAll(resp.Body)
+		errBody, _ := io.ReadAll(resp.Body)
 		var errResp AgoricErrorResponse
 		json.Unmarshal(errBody, &errResp)
 		log.Println(errResp.Error)
@@ -51,7 +38,7 @@ func Agoric() (int, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return 0, err
 	}
