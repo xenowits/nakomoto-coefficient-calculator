@@ -60,17 +60,21 @@ func nanoRequest[ReqType any, ResType any](url string, req ReqType) (*ResType, e
 	if err != nil {
 		return nil, err
 	}
+
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
 	}
+
 	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
+
 	if err = json.Unmarshal(body, &response); err != nil {
 		return nil, err
 	}
+
 	return &response, nil
 }
 
