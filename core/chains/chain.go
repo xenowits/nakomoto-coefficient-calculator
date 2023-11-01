@@ -33,13 +33,13 @@ const (
 	MINA  Token = "MINA"
 	NEAR  Token = "NEAR"
 	OSMO  Token = "OSMO"
+	PLS   Token = "PLS"
 	REGEN Token = "REGEN"
 	RUNE  Token = "RUNE"
 	SOL   Token = "SOL"
 	STARS Token = "STARS"
 	SUI   Token = "SUI"
 	XNO   Token = "XNO"
-	PLS   Token = "PLS"
 )
 
 // ChainName returns the name of the chain given the token name.
@@ -71,6 +71,8 @@ func (t Token) ChainName() string {
 		return "Near Protocol"
 	case OSMO:
 		return "Osmosis"
+	case PLS:
+		return "Pulsechain"
 	case REGEN:
 		return "Regen Network"
 	case RUNE:
@@ -83,8 +85,6 @@ func (t Token) ChainName() string {
 		return "Sui Protocol"
 	case XNO:
 		return "Nano"
-	case PLS:
-		return "Pulsechain"
 	default:
 		return "Unknown"
 	}
