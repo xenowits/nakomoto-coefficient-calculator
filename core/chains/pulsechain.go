@@ -45,8 +45,6 @@ func Pulsechain() (int, error) {
 		errBody, _ := ioutil.ReadAll(resp.Body)
 		var errResp PulsechainErrorResponse
 		json.Unmarshal(errBody, &errResp)
-		log.Println(errResp.Code)
-		log.Println(errResp.Message)
 		return 0, err
 	}
 	defer resp.Body.Close()
