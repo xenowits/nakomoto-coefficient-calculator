@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"io/ioutil"
-	"log"
 	"sort"
 	"net/http"
 
@@ -33,6 +32,7 @@ func Filter[T any](s []T, cond func(t T) bool) []T {
 			res = append(res, v)
 		}
 	}
+
 	return res
 }
 
@@ -52,6 +52,7 @@ func Pulsechain() (int, error) {
 
 		return 0, err
 	}
+
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
