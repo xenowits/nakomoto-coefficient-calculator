@@ -90,7 +90,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, HBAR, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, REGEN, RUNE, SOL, STARS, SUI, XNO, PLS}
+var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, HBAR, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -150,6 +150,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Near()
 	case OSMO:
 		currVal, err = Osmosis()
+	case PLS:
+		currVal, err = Pulsechain()
 	case REGEN:
 		currVal, err = Regen()
 	case RUNE:
@@ -162,8 +164,6 @@ func newValues(token Token) (int, error) {
 		currVal, err = Sui()
 	case XNO:
 		currVal, err = Nano()
-	case PLS:
-		currVal, err = Pulsechain()
 	default:
 		return 0, fmt.Errorf("chain not found %s", token)
 	}
