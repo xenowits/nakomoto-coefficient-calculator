@@ -12,7 +12,7 @@ import (
 )
 
 type Validator struct {
-	Balance   string     `json:"balance"`
+	Balance   string    `json:"balance"`
 	Status    string    `json:"status"`
 }
 
@@ -38,6 +38,7 @@ func Filter[T any](s []T, cond func(t T) bool) []T {
 
 func Pulsechain() (int, error) {
 	var votingPowers []int64
+	var minVotingBalance int64 = 32000000000000000
 	
 	url := fmt.Sprintf("https://rpc-pulsechain.g4mm4.io/beacon-api/eth/v1/beacon/states/head/validators")
 	resp, err := http.Get(url)
@@ -72,12 +73,16 @@ func Pulsechain() (int, error) {
 	}
 
 	activeValidators := Filter(response.Validators, func(validator Validator) bool {
-		return validator.Status == "active_ongoing"
+		balance, err := strconv.ParseInt(validator.Balance, 10, 64)
+
+		return err == nil && validator.Status == "active_ongoing" && 
+			balance >= minVotingBalance
 	})
 
 	// loop through the validators again, create the votingPowers array
 	for _, validator := range activeValidators {
 		balance, _ := strconv.ParseInt(validator.Balance, 10, 64)
+		
 		votingPowers = append(votingPowers, balance)
 	}
 
