@@ -54,11 +54,10 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 13. [Ethereum 2](https://ethereum.org/)
 14. [Regen Network](https://www.regen.network/)
 15. [Agoric](https://agoric.com/)
-16. [Nano](https://nano.org/)
-17. [Stargaze](https://stargaze.zone/)
-18. [Hedera](https://hedera.com/)
-19. [Sui](https://sui.io/)
-20. [Pulsechain](https://pulsechain.com/)
+16. [Stargaze](https://stargaze.zone/)
+17. [Hedera](https://hedera.com/)
+18. [Sui](https://sui.io/)
+19. [Pulsechain](https://pulsechain.com/)
 
 ### Notes
 

@@ -39,7 +39,6 @@ const (
 	SOL   Token = "SOL"
 	STARS Token = "STARS"
 	SUI   Token = "SUI"
-	XNO   Token = "XNO"
 )
 
 // ChainName returns the name of the chain given the token name.
@@ -83,8 +82,6 @@ func (t Token) ChainName() string {
 		return "Stargaze"
 	case SUI:
 		return "Sui Protocol"
-	case XNO:
-		return "Nano"
 	default:
 		return "Unknown"
 	}
@@ -162,8 +159,6 @@ func newValues(token Token) (int, error) {
 		currVal, err = Stargaze()
 	case SUI:
 		currVal, err = Sui()
-	case XNO:
-		currVal, err = Nano()
 	default:
 		return 0, fmt.Errorf("chain not found %s", token)
 	}
