@@ -58,6 +58,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 17. [Stargaze](https://stargaze.zone/)
 18. [Hedera](https://hedera.com/)
 19. [Sui](https://sui.io/)
+20. [Pulsechain](https://pulsechain.com/)
 
 ### Notes
 
