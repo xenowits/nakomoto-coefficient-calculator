@@ -1,6 +1,6 @@
 module github.com/xenowits/nakamoto-coefficient-calculator
 
-go 1.18
+go 1.21
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
