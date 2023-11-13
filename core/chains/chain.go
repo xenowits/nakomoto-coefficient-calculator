@@ -28,7 +28,6 @@ const (
 	GRT   Token = "GRT"
 	HBAR  Token = "HBAR"
 	JUNO  Token = "JUNO"
-	LUNA  Token = "LUNA" // TODO(xenowits): Remove terra Chain from codebase
 	MATIC Token = "MATIC"
 	MINA  Token = "MINA"
 	NEAR  Token = "NEAR"
@@ -61,8 +60,6 @@ func (t Token) ChainName() string {
 		return "Hedera"
 	case JUNO:
 		return "Juno"
-	case LUNA:
-		return "Terra"
 	case MATIC:
 		return "Polygon"
 	case MINA:
@@ -90,7 +87,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, HBAR, JUNO, LUNA, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
+var Tokens = []Token{ATOM, AVAX, BLD, BNB, ETH2, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -140,8 +137,6 @@ func newValues(token Token) (int, error) {
 		currVal, err = Hedera()
 	case JUNO:
 		currVal, err = Juno()
-	case LUNA:
-		currVal, err = Terra()
 	case MATIC:
 		currVal, err = Polygon()
 	case MINA:
