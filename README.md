@@ -59,6 +59,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 18. [Sui](https://sui.io/)
 19. [Pulsechain](https://pulsechain.com/)
 20. [Celestia](https://celestia.org/)
+21. [MultiversX](https://multiversx.com/)
 
 ### Notes
 
