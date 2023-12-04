@@ -24,6 +24,7 @@ const (
 	AVAX  Token = "AVAX"
 	BLD   Token = "BLD"
 	BNB   Token = "BNB"
+	DOT   Token = "DOT"
 	EGLD  Token = "EGLD"
 	ETH2  Token = "ETH2"
 	GRT   Token = "GRT"
@@ -53,6 +54,8 @@ func (t Token) ChainName() string {
 		return "Agoric"
 	case BNB:
 		return "Binance"
+	case DOT:
+		return "Polkadot"
 	case EGLD:
 		return "MultiversX"
 	case ETH2:
@@ -90,7 +93,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ATOM, AVAX, BLD, BNB, EGLD, ETH2, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
+var Tokens = []Token{ATOM, AVAX, BLD, BNB, DOT, EGLD, ETH2, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -132,6 +135,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Agoric()
 	case BNB:
 		currVal, err = Binance()
+	case DOT:
+		currVal, err = Polkadot()
 	case EGLD:
 		currVal, err = MultiversX()
 	case ETH2:
