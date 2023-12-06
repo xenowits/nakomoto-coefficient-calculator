@@ -3,48 +3,28 @@ package chains
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"io/ioutil"
-	"sort"
 	"net/http"
 
 	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
-type Validator struct {
-	Balance   string    `json:"balance"`
-	Status    string    `json:"status"`
+type ApiResponse struct {
+	LastUpdated  string    `json:"last_updated"`
+	Validators   []int64   `json:"active_validator_balances"`
 }
 
-type PulsechainResponse struct {
-	Validators []Validator `json:"data"`
-}
-
-type PulsechainErrorResponse struct {
-	Code      int      `json:"code"`
-	Message   string   `json:"message"`
-}
-
-func Filter[T any](s []T, cond func(t T) bool) []T {
-	res := []T{}
-	for _, v := range s {
-		if cond(v) {
-			res = append(res, v)
-		}
-	}
-
-	return res
+type ApiErrorResponse struct {
+	Code         int       `json:"code"`
+	Message      string    `json:"message"`
 }
 
 func Pulsechain() (int, error) {
-	var votingPowers []int64
-	var minVotingBalance int64 = 32000000000000000
-	
-	url := fmt.Sprintf("https://rpc-pulsechain.g4mm4.io/beacon-api/eth/v1/beacon/states/head/validators")
+	url := fmt.Sprintf("https://api.korkey.tech/pulsechain/validator_data.json")
 	resp, err := http.Get(url)
 	if err != nil {
 		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp PulsechainErrorResponse
+		var errResp ApiErrorResponse
 		
 		errr := json.Unmarshal(errBody, &errResp)
 		if errr != nil {
@@ -61,7 +41,7 @@ func Pulsechain() (int, error) {
 		return 0, err
 	}
 
-	var response PulsechainResponse
+	var response ApiResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return 0, err
@@ -72,28 +52,11 @@ func Pulsechain() (int, error) {
 		return 0, err
 	}
 
-	activeValidators := Filter(response.Validators, func(validator Validator) bool {
-		balance, err := strconv.ParseInt(validator.Balance, 10, 64)
-
-		return err == nil && validator.Status == "active_ongoing" && 
-			balance >= minVotingBalance
-	})
-
-	// loop through the validators again, create the votingPowers array
-	for _, validator := range activeValidators {
-		balance, _ := strconv.ParseInt(validator.Balance, 10, 64)
-		
-		votingPowers = append(votingPowers, balance)
-	}
-
-	// Sort the voting powers in descending order since they maybe in random order.
-	sort.Slice(votingPowers, func(i, j int) bool { return votingPowers[i] > votingPowers[j] })
-
-	totalVotingPower := utils.CalculateTotalVotingPower(votingPowers)
+	totalVotingPower := utils.CalculateTotalVotingPower(response.Validators)
 	fmt.Println("Total voting power:", totalVotingPower)
 
 	// Now we're ready to calculate the nakamoto coefficient
-	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
+	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, response.Validators)
 	fmt.Println("The Nakamoto coefficient for Pulsechain is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
