@@ -65,6 +65,7 @@ func Polkadot() (int, error) {
 			log.Println(err)
 			continue
 		}
+		
 		votingPowers = append(votingPowers, bondedTotal)
 	}
 
