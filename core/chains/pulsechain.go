@@ -52,11 +52,11 @@ func Pulsechain() (int, error) {
 		return 0, err
 	}
 
-	totalVotingPower := utils.CalculateTotalVotingPower(response.Validators)
-	fmt.Println("Total voting power:", totalVotingPower)
+	totalStaked := utils.CalculateTotalVotingPower(response.Validators)
+	fmt.Println("Total voting power:", totalStaked)
 
 	// Now we're ready to calculate the nakamoto coefficient
-	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, response.Validators)
+	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalStaked, response.Validators)
 	fmt.Println("The Nakamoto coefficient for Pulsechain is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
