@@ -20,6 +20,7 @@ type ChainState map[Token]Chain
 
 // Append new chains in alphabetical order only.
 const (
+	APT   Token = "APT"
 	ATOM  Token = "ATOM"
 	AVAX  Token = "AVAX"
 	BLD   Token = "BLD"
@@ -46,6 +47,8 @@ const (
 // ChainName returns the name of the chain given the token name.
 func (t Token) ChainName() string {
 	switch t {
+	case APT:
+		return "Aptos"
 	case ATOM:
 		return "Cosmos"
 	case AVAX:
@@ -93,7 +96,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ATOM, AVAX, BLD, BNB, DOT, EGLD, ETH2, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
+var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, ETH2, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -127,6 +130,8 @@ func newValues(token Token) (int, error) {
 	)
 
 	switch token {
+	case APT:
+		currVal, err = Aptos()
 	case ATOM:
 		currVal, err = Cosmos()
 	case AVAX:
