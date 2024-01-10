@@ -77,5 +77,6 @@ func Aptos() (int, error) {
 
 	fmt.Printf("Total voting power: %s\n", calculatedTotalVotingPower.String())
 	fmt.Printf("The Nakomoto coefficient for Aptos is %d\n", coefficient)
-	return 1, nil
+
+	return coefficient, nil
 }
