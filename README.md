@@ -61,6 +61,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 20. [Celestia](https://celestia.org/)
 21. [MultiversX](https://multiversx.com/)
 22. [Polkadot](https://polkadot.network/)
+23. [Aptos][https://aptosfoundation.org/]
 
 ### Notes
 
