@@ -11,7 +11,8 @@ type Chain struct {
 	CurrNCVal int
 }
 
-// Token represents the name of token for a blockchain. For ex: ETH2 for Ethereum.
+// Token represents the name of token for a blockchain.
+// For example, ATOM for cosmos.
 // It is used to identify a particular Chain.
 type Token string
 
@@ -27,7 +28,6 @@ const (
 	BNB   Token = "BNB"
 	DOT   Token = "DOT"
 	EGLD  Token = "EGLD"
-	ETH2  Token = "ETH2"
 	GRT   Token = "GRT"
 	HBAR  Token = "HBAR"
 	JUNO  Token = "JUNO"
@@ -61,8 +61,6 @@ func (t Token) ChainName() string {
 		return "Polkadot"
 	case EGLD:
 		return "MultiversX"
-	case ETH2:
-		return "Ethereum Proof-of-Stake"
 	case GRT:
 		return "Graph Protocol"
 	case HBAR:
@@ -96,7 +94,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, ETH2, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
+var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -144,8 +142,6 @@ func newValues(token Token) (int, error) {
 		currVal, err = Polkadot()
 	case EGLD:
 		currVal, err = MultiversX()
-	case ETH2:
-		currVal, err = Eth2()
 	case GRT:
 		currVal, err = Graph()
 	case HBAR:

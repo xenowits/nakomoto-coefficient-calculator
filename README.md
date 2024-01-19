@@ -51,17 +51,16 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 10. [Thorchain](https://www.thorchain.com/)
 11. [Near](https://near.org/)
 12. [Juno](https://www.junonetwork.io/)
-13. [Ethereum 2](https://ethereum.org/)
-14. [Regen Network](https://www.regen.network/)
-15. [Agoric](https://agoric.com/)
-16. [Stargaze](https://stargaze.zone/)
-17. [Hedera](https://hedera.com/)
-18. [Sui](https://sui.io/)
-19. [Pulsechain](https://pulsechain.com/)
-20. [Celestia](https://celestia.org/)
-21. [MultiversX](https://multiversx.com/)
-22. [Polkadot](https://polkadot.network/)
-23. [Aptos][https://aptosfoundation.org/]
+13. [Regen Network](https://www.regen.network/)
+14. [Agoric](https://agoric.com/)
+15. [Stargaze](https://stargaze.zone/)
+16. [Hedera](https://hedera.com/)
+17. [Sui](https://sui.io/)
+18. [Pulsechain](https://pulsechain.com/)
+19. [Celestia](https://celestia.org/)
+20. [MultiversX](https://multiversx.com/)
+21. [Polkadot](https://polkadot.network/)
+22. [Aptos](https://aptosfoundation.org/)
 
 ### Notes
 
