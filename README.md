@@ -61,6 +61,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 20. [MultiversX](https://multiversx.com/)
 21. [Polkadot](https://polkadot.network/)
 22. [Aptos](https://aptosfoundation.org/)
+23. [Nano](https://nano.org/)
 
 ### Notes
 
