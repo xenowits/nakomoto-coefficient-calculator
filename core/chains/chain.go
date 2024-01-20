@@ -42,6 +42,7 @@ const (
 	STARS Token = "STARS"
 	SUI   Token = "SUI"
 	TIA   Token = "TIA"
+	XNO   Token = "NANO"
 )
 
 // ChainName returns the name of the chain given the token name.
@@ -87,6 +88,8 @@ func (t Token) ChainName() string {
 		return "Stargaze"
 	case SUI:
 		return "Sui Protocol"
+	case XNO:
+		return "Nano"
 	case TIA:
 		return "Celestia"
 	default:
@@ -94,7 +97,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
+var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -168,6 +171,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Stargaze()
 	case SUI:
 		currVal, err = Sui()
+	case XNO:
+		currVal, err = Nano()
 	case TIA:
 		currVal, err = Celestia()
 	default:
