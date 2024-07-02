@@ -64,8 +64,6 @@ func (t Token) ChainName() string {
 		return "MultiversX"
 	case ADA:
 		return "Cardano"
-	case ETH2:
-		return "Ethereum Proof-of-Stake"
 	case GRT:
 		return "Graph Protocol"
 	case HBAR:
@@ -99,8 +97,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
-var Tokens = []Token{ATOM, AVAX, BLD, BNB, ADA, ETH2, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
+var Tokens = []Token{ADA, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -134,6 +131,8 @@ func newValues(token Token) (int, error) {
 	)
 
 	switch token {
+	case ADA:
+		currVal, err = Cardano()
 	case APT:
 		currVal, err = Aptos()
 	case ATOM:
@@ -148,10 +147,6 @@ func newValues(token Token) (int, error) {
 		currVal, err = Polkadot()
 	case EGLD:
 		currVal, err = MultiversX()
-	case ADA:
-		currVal, err = Cardano()
-	case ETH2:
-		currVal, err = Eth2()
 	case GRT:
 		currVal, err = Graph()
 	case HBAR:
