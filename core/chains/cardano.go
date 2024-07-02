@@ -6,68 +6,70 @@ import (
 	"log"
 	"math/big"
 	"net/http"
-	"sort"
 
 	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
-type CardanoResponse struct {
-	Code int      `json:"code"`
-	Time string   `json:"time"`
-	Msg  string   `json:"msg"`
-	Data []CardanoPool `json:"data"`
-}
-
-type CardanoPool struct {
-	PoolID         string  `json:"pool_id"`
-	Name           string  `json:"name"`
-	Stake          string  `json:"stake"`
-	BlocksLifetime string  `json:"blocks_lifetime"`
-	ROALifetime    string  `json:"roa_lifetime"`
-	Pledge         string  `json:"pledge"`
-	Delegators     string  `json:"delegators"`
-	Saturation     float64 `json:"saturation"`
+type ChartData struct {
+    AvgStake      float64 `json:"avgstake"`
+    DelegateCount int     `json:"delegatecount"`
+    Epoch         int     `json:"epoch"`
+    Label         string  `json:"label"`
+    Leverage      string  `json:"leverage"`
+    MavGroup      string  `json:"mavgroup"`
+    Pledge        float64 `json:"pledge"`
+    PoolCount     int     `json:"poolcount"`
+    PrctStake     float64 `json:"prctstake"`
+    Stake         float64 `json:"stake"`
 }
 
 func Cardano() (int, error) {
-	url := "https://js.cexplorer.io/api-static/pool/list.json"
+    url := "https://api.balanceanalytics.io/rpc/pool_group_stake_donut"
 
-	var stakeAmounts []big.Int
+    req, err := http.NewRequest("GET", url, nil)
+    if err != nil {
+        log.Println("Error creating request:", err)
+        return 0, err
+    }
 
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Println(err)
-		return 0, err
-	}
-	defer resp.Body.Close()
+    // This is the PUBLIC_BALANCE_API_TOKEN taken from https://www.balanceanalytics.io/chartboards/donut_shop
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoid2ViYXBwX3VzZXIifQ.eg3Zb9ZduibYJr1pgUrfqy4PFhkVU1uO_F9gFPBZnBI")
+	req.Header.Set("Content-Type", "application/json")
 
-	var response CardanoResponse
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
-		return 0, err
-	}
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        log.Println("Error making request:", err)
+        return 0, err
+    }
+    defer resp.Body.Close()
 
-	// Loop through the pools and extract stake amounts
-	for _, pool := range response.Data {
-		stakeInt, ok := new(big.Int).SetString(pool.Stake, 10)
-		if !ok {
-			log.Println("Error converting stake amount to big.Int")
-			continue
+    var responseData []struct {
+        Chartdata []ChartData `json:"chartdata"`
+    }
+    err = json.NewDecoder(resp.Body).Decode(&responseData)
+    if err != nil {
+        log.Println("Error decoding JSON:", err)
+        return 0, err
+    }
+
+	var votingPowers []big.Int
+		for _, data := range responseData {
+			for _, chartData := range data.Chartdata {
+			stakeInt := big.NewInt(int64(chartData.Stake))
+			votingPowers = append(votingPowers, *stakeInt)
 		}
-		stakeAmounts = append(stakeAmounts, *stakeInt)
 	}
 
-	// need to sort the stake amounts in descending order
-	sort.Slice(stakeAmounts, func(i, j int) bool {
-		return stakeAmounts[i].Cmp(&stakeAmounts[j]) == 1
-	})
+	// Calculate total voting power
+	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
 
-	totalStake := utils.CalculateTotalVotingPowerBigNums(stakeAmounts)
-	fmt.Println("Total voting power:", new(big.Float).SetInt(totalStake))
+	// Calculate Nakamoto coefficient
+	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums51(totalVotingPower, votingPowers)
 
-	// now we're ready to calculate the nakamoto coefficient
-	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalStake, stakeAmounts)
+	fmt.Println("Total voting power:", totalVotingPower)
 	fmt.Println("The Nakamoto coefficient for Cardano is", nakamotoCoefficient)
 
+	// Return Nakamoto coefficient
 	return nakamotoCoefficient, nil
 }
