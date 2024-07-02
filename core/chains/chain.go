@@ -11,7 +11,8 @@ type Chain struct {
 	CurrNCVal int
 }
 
-// Token represents the name of token for a blockchain. For ex: ETH2 for Ethereum.
+// Token represents the name of token for a blockchain.
+// For example, ATOM for cosmos.
 // It is used to identify a particular Chain.
 type Token string
 
@@ -20,12 +21,14 @@ type ChainState map[Token]Chain
 
 // Append new chains in alphabetical order only.
 const (
+	ADA   Token = "ADA"
+	APT   Token = "APT"
 	ATOM  Token = "ATOM"
 	AVAX  Token = "AVAX"
 	BLD   Token = "BLD"
 	BNB   Token = "BNB"
-	ADA   Token = "ADA"
-	ETH2  Token = "ETH2"
+	DOT   Token = "DOT"
+	EGLD  Token = "EGLD"
 	GRT   Token = "GRT"
 	HBAR  Token = "HBAR"
 	JUNO  Token = "JUNO"
@@ -45,6 +48,8 @@ const (
 // ChainName returns the name of the chain given the token name.
 func (t Token) ChainName() string {
 	switch t {
+	case APT:
+		return "Aptos"
 	case ATOM:
 		return "Cosmos"
 	case AVAX:
@@ -53,6 +58,10 @@ func (t Token) ChainName() string {
 		return "Agoric"
 	case BNB:
 		return "Binance"
+	case DOT:
+		return "Polkadot"
+	case EGLD:
+		return "MultiversX"
 	case ADA:
 		return "Cardano"
 	case ETH2:
@@ -90,6 +99,7 @@ func (t Token) ChainName() string {
 	}
 }
 
+var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
 var Tokens = []Token{ATOM, AVAX, BLD, BNB, ADA, ETH2, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
@@ -124,6 +134,8 @@ func newValues(token Token) (int, error) {
 	)
 
 	switch token {
+	case APT:
+		currVal, err = Aptos()
 	case ATOM:
 		currVal, err = Cosmos()
 	case AVAX:
@@ -132,6 +144,10 @@ func newValues(token Token) (int, error) {
 		currVal, err = Agoric()
 	case BNB:
 		currVal, err = Binance()
+	case DOT:
+		currVal, err = Polkadot()
+	case EGLD:
+		currVal, err = MultiversX()
 	case ADA:
 		currVal, err = Cardano()
 	case ETH2:

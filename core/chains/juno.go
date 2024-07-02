@@ -11,18 +11,21 @@ import (
 )
 
 const BOND_STATUS_BONDED = "BOND_STATUS_BONDED"
+const JunoValidatorsUrl = "https://validators.cosmos.directory/chains/juno"
 
-type JunoValidator struct {
-	Status string `json:"status"`
-	Tokens int64  `json:"tokens"`
-	Jailed bool   `json:"jailed"`
+type JunoValidators struct {
+	Name       string `json:"name"`
+	Validators []struct {
+		Status string `json:""`
+		Tokens int64  `json:",string"`
+		Jailed bool   `json:""`
+	} `json:"validators"`
 }
 
 func Juno() (int, error) {
 	var votingPowers []int64
 
-	url := fmt.Sprintf("https://juno.api.explorers.guru/api/validators")
-	resp, err := http.Get(url)
+	resp, err := http.Get(JunoValidatorsUrl)
 	if err != nil {
 		return 0, err
 	}
@@ -33,14 +36,14 @@ func Juno() (int, error) {
 		return 0, err
 	}
 
-	var response []JunoValidator
+	var response JunoValidators
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return 0, err
 	}
 
 	// loop through the validators voting powers
-	for _, ele := range response {
+	for _, ele := range response.Validators {
 		if ele.Jailed || ele.Status != BOND_STATUS_BONDED {
 			continue
 		}
