@@ -28,7 +28,7 @@ func CalcNakamotoCoefficientBigNums(totalVotingPower *big.Int, votingPowers []bi
 }
 
 func CalcNakamotoCoefficientBigNums51(totalVotingPower *big.Int, votingPowers []big.Int) int {
-	thresholdPercent := big.NewFloat(0.51)
+	thresholdPercent := big.NewFloat(0.50)
 	thresholdVal := new(big.Float).Mul(new(big.Float).SetInt(totalVotingPower), thresholdPercent)
 	cumulativeVal := big.NewFloat(0.00)
 	nakamotoCoefficient := 0
