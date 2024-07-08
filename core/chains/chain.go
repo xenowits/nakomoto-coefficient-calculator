@@ -38,6 +38,7 @@ const (
 	PLS   Token = "PLS"
 	REGEN Token = "REGEN"
 	RUNE  Token = "RUNE"
+	SEI   Token = "SEI"
 	SOL   Token = "SOL"
 	STARS Token = "STARS"
 	SUI   Token = "SUI"
@@ -81,6 +82,8 @@ func (t Token) ChainName() string {
 		return "Regen Network"
 	case RUNE:
 		return "Thorchain"
+	case SEI:
+		return "Sei"
 	case SOL:
 		return "Solana"
 	case STARS:
@@ -94,7 +97,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
+var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -162,6 +165,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Regen()
 	case RUNE:
 		currVal, err = Thorchain()
+	case SEI:
+		currval, err = Sei()
 	case SOL:
 		currVal, err = Solana()
 	case STARS:
