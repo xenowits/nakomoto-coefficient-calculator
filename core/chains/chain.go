@@ -56,7 +56,7 @@ func (t Token) ChainName() string {
 	case BLD:
 		return "Agoric"
 	case BNB:
-		return "Binance"
+		return "BNB Smart Chain"
 	case DOT:
 		return "Polkadot"
 	case EGLD:
@@ -137,7 +137,7 @@ func newValues(token Token) (int, error) {
 	case BLD:
 		currVal, err = Agoric()
 	case BNB:
-		currVal, err = Binance()
+		currVal, err = BSC()
 	case DOT:
 		currVal, err = Polkadot()
 	case EGLD:
