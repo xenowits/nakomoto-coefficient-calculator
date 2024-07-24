@@ -16,6 +16,7 @@ we simply calculate:
 nakamoto-coefficient: no of validators controlling 33% of the total network stake
 ```
 
+Note that the threshold may be different for some blockchains, for example, 50%.
 So, I would suggest users to understand the context, cross-verify and examine the results. For any feedback, please join this [discord](https://discord.gg/Una8qmFg).
 
 ### Programming Languages
@@ -61,6 +62,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 20. [MultiversX](https://multiversx.com/)
 21. [Polkadot](https://polkadot.network/)
 22. [Aptos](https://aptosfoundation.org/)
+23. [Cardano](https://cardano.org/)
 
 ### Notes
 
