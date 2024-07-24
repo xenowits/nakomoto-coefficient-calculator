@@ -6,12 +6,14 @@ import (
 	"log"
 	"math/big"
 	"net/http"
-
+	"sort"
+	
 	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
 type CardanoResponse struct {
 	Label string  `json:"label"`
+	Class string  `json:"class"`
 	Epoch int     `json:"epoch"`
 	Stake float64 `json:"stake"`
 }
@@ -49,6 +51,15 @@ func Cardano() (int, error) {
 			votingPowers = append(votingPowers, *stakeInt)
 		}
 	}
+
+	// need to sort the powers in descending order since they are in random order
+	sort.Slice(votingPowers, func(i, j int) bool {
+		res := (&votingPowers[i]).Cmp(&votingPowers[j])
+		if res == 1 {
+			return true
+		}
+		return false
+	})
 
 	// Calculate total voting power
 	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
