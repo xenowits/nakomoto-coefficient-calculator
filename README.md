@@ -41,7 +41,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 
 1. [Cosmos](https://cosmos.network/)
 2. [Polygon](https://polygon.technology/)
-3. [Binance Smart Chain](https://www.binance.com)
+3. [BNB Smart Chain](https://www.bnbchain.org)
 4. [Osmosis Zone](https://osmosis.zone/)
 5. [Mina](https://minaprotocol.com/)
 6. [Solana](https://solana.com/)

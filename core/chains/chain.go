@@ -21,6 +21,7 @@ type ChainState map[Token]Chain
 
 // Append new chains in alphabetical order only.
 const (
+	ALGO  Token = "ALGO"
 	APT   Token = "APT"
 	ATOM  Token = "ATOM"
 	AVAX  Token = "AVAX"
@@ -48,6 +49,8 @@ const (
 // ChainName returns the name of the chain given the token name.
 func (t Token) ChainName() string {
 	switch t {
+	case ALGO:
+		return "Algo"
 	case APT:
 		return "Aptos"
 	case ATOM:
@@ -57,7 +60,7 @@ func (t Token) ChainName() string {
 	case BLD:
 		return "Agoric"
 	case BNB:
-		return "Binance"
+		return "BNB Smart Chain"
 	case DOT:
 		return "Polkadot"
 	case EGLD:
@@ -97,7 +100,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA}
+var Tokens = []Token{ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -131,6 +134,8 @@ func newValues(token Token) (int, error) {
 	)
 
 	switch token {
+	case ALGO:
+		currVal, err = Algorand()
 	case APT:
 		currVal, err = Aptos()
 	case ATOM:
@@ -140,7 +145,7 @@ func newValues(token Token) (int, error) {
 	case BLD:
 		currVal, err = Agoric()
 	case BNB:
-		currVal, err = Binance()
+		currVal, err = BSC()
 	case DOT:
 		currVal, err = Polkadot()
 	case EGLD:
