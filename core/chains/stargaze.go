@@ -1,6 +1,7 @@
 package chains
 
 func Stargaze() (int, error) {
-	url := "https://rest.stargaze-apis.com/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
-	return fetchCosmosSDKNakaCoeff("stargaze", url)
+	validatorsURL := "https://rest.stargaze-apis.com/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
+	poolURL := "https://rest.stargaze-apis.com/cosmos/staking/v1beta1/pool"
+	return FetchCosmosSDKNakaCoeff("stargaze", validatorsURL, poolURL)
 }

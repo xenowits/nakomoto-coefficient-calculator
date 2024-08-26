@@ -114,7 +114,7 @@ func RefreshChainState(prevState ChainState) ChainState {
 	for _, token := range Tokens {
 		currVal, err := newValues(token)
 		if err != nil {
-			log.Println("failed to update chain info", token, err)
+			log.Println("Failed to update chain info:", token, err)
 			continue
 		}
 
@@ -132,6 +132,8 @@ func newValues(token Token) (int, error) {
 		currVal int
 		err     error
 	)
+
+	log.Printf("Calculating Nakamoto coefficient for %s", token.ChainName())
 
 	switch token {
 	case ALGO:
@@ -171,17 +173,31 @@ func newValues(token Token) (int, error) {
 	case RUNE:
 		currVal, err = Thorchain()
 	case SEI:
-		currval, err = Sei()
+		log.Println("Attempting to calculate Sei Nakamoto coefficient...")
+		currVal, err = Sei()
+		if err != nil {
+			log.Printf("Error calculating Sei Nakamoto coefficient: %v", err)
+		}
 	case SOL:
 		currVal, err = Solana()
 	case STARS:
+		log.Println("Attempting to calculate Stargaze Nakamoto coefficient...")
 		currVal, err = Stargaze()
+		if err != nil {
+			log.Printf("Error calculating Stargaze Nakamoto coefficient: %v", err)
+		}
 	case SUI:
 		currVal, err = Sui()
 	case TIA:
 		currVal, err = Celestia()
 	default:
-		return 0, fmt.Errorf("chain not found %s", token)
+		return 0, fmt.Errorf("chain not found: %s", token)
+	}
+
+	if err != nil {
+		log.Printf("Error in chain %s: %v", token.ChainName(), err)
+	} else {
+		log.Printf("Successfully calculated Nakamoto coefficient for %s: %d", token.ChainName(), currVal)
 	}
 
 	return currVal, err
