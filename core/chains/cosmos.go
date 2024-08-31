@@ -19,13 +19,13 @@ import (
 const BONDED = "BOND_STATUS_BONDED"
 
 func Cosmos() (int, error) {
-	validatorURL := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
-	poolURL := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/pool"
+	validatorDataURL := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
+	stakingPoolURL := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/pool"
 
-	return FetchCosmosSDKNakaCoeff("cosmos", validatorURL, poolURL)
+	return FetchCosmosSDKNakaCoeff("cosmos", validatorDataURL, stakingPoolURL)
 }
 
-type cosmosValidatorResponse struct {
+type cosmosValidatorData struct {
 	Validators []struct {
 		OperatorAddress string `json:"operator_address"`
 		ConsensusPubkey struct {
@@ -39,7 +39,7 @@ type cosmosValidatorResponse struct {
 	} `json:"validators"`
 }
 
-type cosmosPoolResponse struct {
+type cosmosStakingPoolData struct {
 	Pool struct {
 		NotBondedTokens string `json:"not_bonded_tokens"`
 		BondedTokens    string `json:"bonded_tokens"`
@@ -50,8 +50,8 @@ type cosmosPoolResponse struct {
 func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, error) {
 	var (
 		votingPowers []big.Int
-		validators   cosmosValidatorResponse
-		pool         cosmosPoolResponse
+		validators   cosmosValidatorData
+		pool         cosmosStakingPoolData
 		err          error
 	)
 
@@ -109,63 +109,63 @@ func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, erro
 }
 
 // Fetches
-func fetchValidatorData(url string) (cosmosValidatorResponse, error) {
+func fetchValidatorData(url string) (cosmosValidatorData, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Println(err)
-		return cosmosValidatorResponse{}, errors.New("create get request for cosmos validators")
+		return cosmosValidatorData{}, errors.New("create get request for cosmos validators")
 	}
 
 	resp, err := new(http.Client).Do(req)
 	if err != nil {
 		log.Println(err)
-		return cosmosValidatorResponse{}, errors.New("get request unsuccessful for cosmos validators")
+		return cosmosValidatorData{}, errors.New("get request unsuccessful for cosmos validators")
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return cosmosValidatorResponse{}, err
+		return cosmosValidatorData{}, err
 	}
 
-	var response cosmosValidatorResponse
+	var response cosmosValidatorData
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return cosmosValidatorResponse{}, err
+		return cosmosValidatorData{}, err
 	}
 
 	return response, nil
 }
 
-func fetchStakingPoolData(url string) (cosmosPoolResponse, error) {
+func fetchStakingPoolData(url string) (cosmosStakingPoolData, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Println(err)
-		return cosmosPoolResponse{}, errors.New("create get request for cosmos pool")
+		return cosmosStakingPoolData{}, errors.New("create get request for cosmos pool")
 	}
 
 	resp, err := new(http.Client).Do(req)
 	if err != nil {
 		log.Println(err)
-		return cosmosPoolResponse{}, errors.New("get request unsuccessful for cosmos pool")
+		return cosmosStakingPoolData{}, errors.New("get request unsuccessful for cosmos pool")
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return cosmosPoolResponse{}, err
+		return cosmosStakingPoolData{}, err
 	}
 
-	var response cosmosPoolResponse
+	var response cosmosStakingPoolData
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return cosmosPoolResponse{}, err
+		return cosmosStakingPoolData{}, err
 	}
 
 	return response, nil
