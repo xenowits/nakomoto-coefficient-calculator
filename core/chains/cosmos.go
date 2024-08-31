@@ -25,7 +25,7 @@ func Cosmos() (int, error) {
 	return FetchCosmosSDKNakaCoeff("cosmos", validatorURL, poolURL)
 }
 
-type cosmosResponse struct {
+type cosmosValidatorResponse struct {
 	Validators []struct {
 		OperatorAddress string `json:"operator_address"`
 		ConsensusPubkey struct {
@@ -36,28 +36,6 @@ type cosmosResponse struct {
 		Status          string `json:"status"`
 		Tokens          string `json:"tokens"`
 		DelegatorShares string `json:"delegator_shares"`
-		Description     struct {
-			Moniker         string `json:"moniker"`
-			Identity        string `json:"identity"`
-			Website         string `json:"website"`
-			SecurityContact string `json:"security_contact"`
-			Details         string `json:"details"`
-		} `json:"description"`
-		UnbondingHeight string `json:"unbonding_height"`
-		UnbondingTime   string `json:"unbonding_time"`
-		Commission      struct {
-			CommissionRates struct {
-				Rate          string `json:"rate"`
-				MaxRate       string `json:"max_rate"`
-				MaxChangeRate string `json:"max_change_rate"`
-			} `json:"commission_rates"`
-			UpdateTime string `json:"update_time"`
-		} `json:"commission"`
-		MinSelfDelegation       string   `json:"min_self_delegation"`
-		UnbondingOnHoldRefCount string   `json:"unbonding_on_hold_ref_count"`
-		UnbondingIds            []string `json:"unbonding_ids"`
-		ValidatorBondShares     string   `json:"validator_bond_shares"`
-		LiquidShares            string   `json:"liquid_shares"`
 	} `json:"validators"`
 }
 
@@ -68,10 +46,11 @@ type cosmosPoolResponse struct {
 	} `json:"pool"`
 }
 
+// fetchCosmosSDKNakaCoeff returns the nakamoto coefficient for a given cosmos SDK-based chain through REST API.
 func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, error) {
 	var (
 		votingPowers []big.Int
-		validators   cosmosResponse
+		validators   cosmosValidatorResponse
 		pool         cosmosPoolResponse
 		err          error
 	)
@@ -79,13 +58,13 @@ func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, erro
 	log.Printf("Fetching data for %s", chainName)
 
 	// Fetch the validator data
-	validators, err = fetchValidators(validatorURL)
+	validators, err = fetchValidatorData(validatorURL)
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch validator data for %s: %w", chainName, err)
 	}
 
-	// Fetch the pool data to get the total bonded tokens
-	pool, err = fetchPool(poolURL)
+	// Fetch the staking pool data to get the total bonded tokens
+	pool, err = fetchStakingPoolData(poolURL)
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch pool data for %s: %w", chainName, err)
 	}
@@ -110,7 +89,7 @@ func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, erro
 		votingPowers = append(votingPowers, *big.NewInt(int64(val)))
 	}
 
-	// Summarize the voting powers for logging
+	// Summarize voting powers for logging
 	log.Printf("Voting powers for %s: %d validators with a total voting power of %s", chainName, len(votingPowers), totalVotingPower.String())
 
 	if len(votingPowers) == 0 {
@@ -122,45 +101,46 @@ func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, erro
 		return votingPowers[i].Cmp(&votingPowers[j]) > 0
 	})
 
-	// Now we're ready to calculate the nakamoto coefficient
+	// Calculate the Nakamoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
 	log.Printf("The Nakamoto coefficient for %s is %d", chainName, nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
 
-func fetchValidators(url string) (cosmosResponse, error) {
+// Fetches
+func fetchValidatorData(url string) (cosmosValidatorResponse, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Println(err)
-		return cosmosResponse{}, errors.New("create get request for cosmos validators")
+		return cosmosValidatorResponse{}, errors.New("create get request for cosmos validators")
 	}
 
 	resp, err := new(http.Client).Do(req)
 	if err != nil {
 		log.Println(err)
-		return cosmosResponse{}, errors.New("get request unsuccessful for cosmos validators")
+		return cosmosValidatorResponse{}, errors.New("get request unsuccessful for cosmos validators")
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return cosmosResponse{}, err
+		return cosmosValidatorResponse{}, err
 	}
 
-	var response cosmosResponse
+	var response cosmosValidatorResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return cosmosResponse{}, err
+		return cosmosValidatorResponse{}, err
 	}
 
 	return response, nil
 }
 
-func fetchPool(url string) (cosmosPoolResponse, error) {
+func fetchStakingPoolData(url string) (cosmosPoolResponse, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
 
