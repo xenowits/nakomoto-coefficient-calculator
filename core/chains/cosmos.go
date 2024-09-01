@@ -108,7 +108,7 @@ func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, erro
 	return nakamotoCoefficient, nil
 }
 
-// Fetches
+// Fetches data on active validator set
 func fetchValidatorData(url string) (cosmosValidatorData, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
@@ -140,6 +140,7 @@ func fetchValidatorData(url string) (cosmosValidatorData, error) {
 	return response, nil
 }
 
+// Fetches staking pool data incl bonded and not_bonded tokens
 func fetchStakingPoolData(url string) (cosmosStakingPoolData, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
