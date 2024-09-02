@@ -39,6 +39,7 @@ const (
 	PLS   Token = "PLS"
 	REGEN Token = "REGEN"
 	RUNE  Token = "RUNE"
+	SEI   Token = "SEI"
 	SOL   Token = "SOL"
 	STARS Token = "STARS"
 	SUI   Token = "SUI"
@@ -84,6 +85,8 @@ func (t Token) ChainName() string {
 		return "Regen Network"
 	case RUNE:
 		return "Thorchain"
+	case SEI:
+		return "Sei"
 	case SOL:
 		return "Solana"
 	case STARS:
@@ -97,7 +100,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SOL, STARS, SUI, TIA}
+var Tokens = []Token{ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -111,7 +114,7 @@ func RefreshChainState(prevState ChainState) ChainState {
 	for _, token := range Tokens {
 		currVal, err := newValues(token)
 		if err != nil {
-			log.Println("failed to update chain info", token, err)
+			log.Println("Failed to update chain info:", token, err)
 			continue
 		}
 
@@ -129,6 +132,8 @@ func newValues(token Token) (int, error) {
 		currVal int
 		err     error
 	)
+
+	log.Printf("Calculating Nakamoto coefficient for %s", token.ChainName())
 
 	switch token {
 	case ALGO:
@@ -167,16 +172,32 @@ func newValues(token Token) (int, error) {
 		currVal, err = Regen()
 	case RUNE:
 		currVal, err = Thorchain()
+	case SEI:
+		log.Println("Attempting to calculate Sei Nakamoto coefficient...")
+		currVal, err = Sei()
+		if err != nil {
+			log.Printf("Error calculating Sei Nakamoto coefficient: %v", err)
+		}
 	case SOL:
 		currVal, err = Solana()
 	case STARS:
+		log.Println("Attempting to calculate Stargaze Nakamoto coefficient...")
 		currVal, err = Stargaze()
+		if err != nil {
+			log.Printf("Error calculating Stargaze Nakamoto coefficient: %v", err)
+		}
 	case SUI:
 		currVal, err = Sui()
 	case TIA:
 		currVal, err = Celestia()
 	default:
-		return 0, fmt.Errorf("chain not found %s", token)
+		return 0, fmt.Errorf("chain not found: %s", token)
+	}
+
+	if err != nil {
+		log.Printf("Error in chain %s: %v", token.ChainName(), err)
+	} else {
+		log.Printf("Successfully calculated Nakamoto coefficient for %s: %d", token.ChainName(), currVal)
 	}
 
 	return currVal, err

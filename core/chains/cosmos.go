@@ -18,82 +18,155 @@ import (
 
 const BONDED = "BOND_STATUS_BONDED"
 
-type cosmosResponse struct {
+func Cosmos() (int, error) {
+	validatorDataURL := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
+	stakingPoolURL := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/pool"
+
+	return FetchCosmosSDKNakaCoeff("cosmos", validatorDataURL, stakingPoolURL)
+}
+
+type cosmosValidatorData struct {
 	Validators []struct {
-		Status string `json:"status"`
-		Tokens string `json:"tokens"`
+		OperatorAddress string `json:"operator_address"`
+		ConsensusPubkey struct {
+			Type string `json:"@type"`
+			Key  string `json:"key"`
+		} `json:"consensus_pubkey"`
+		Jailed          bool   `json:"jailed"`
+		Status          string `json:"status"`
+		Tokens          string `json:"tokens"`
+		DelegatorShares string `json:"delegator_shares"`
 	} `json:"validators"`
 }
 
-func Cosmos() (int, error) {
-	url := "https://proxy.atomscan.com/cosmoshub-lcd/cosmos/staking/v1beta1/validators?page.offset=1&pagination.limit=500&status=BOND_STATUS_BONDED"
-	return fetchCosmosSDKNakaCoeff("cosmos", url)
+type cosmosStakingPoolData struct {
+	Pool struct {
+		NotBondedTokens string `json:"not_bonded_tokens"`
+		BondedTokens    string `json:"bonded_tokens"`
+	} `json:"pool"`
 }
 
-// fetchCosmosSDKNakaCoeff returns the nakamoto coefficient for the provided cosmos SDK-based chain using the provided url.
-func fetchCosmosSDKNakaCoeff(chainName, url string) (int, error) {
+// fetchCosmosSDKNakaCoeff returns the nakamoto coefficient for a given cosmos SDK-based chain through REST API.
+func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, error) {
 	var (
 		votingPowers []big.Int
-		response     cosmosResponse
+		validators   cosmosValidatorData
+		pool         cosmosStakingPoolData
 		err          error
 	)
 
-	response, err = fetch(url)
+	log.Printf("Fetching data for %s", chainName)
+
+	// Fetch the validator data
+	validators, err = fetchValidatorData(validatorURL)
 	if err != nil {
-		return 0, fmt.Errorf("failed to fetch data for %s: %w", chainName, err)
+		return 0, fmt.Errorf("failed to fetch validator data for %s: %w", chainName, err)
 	}
 
-	// loop through the validators voting powers
-	for _, ele := range response.Validators {
+	// Fetch the staking pool data to get the total bonded tokens
+	pool, err = fetchStakingPoolData(poolURL)
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch pool data for %s: %w", chainName, err)
+	}
+
+	// Convert the bonded tokens from the pool response
+	totalVotingPower, ok := new(big.Int).SetString(pool.Pool.BondedTokens, 10)
+	if !ok {
+		return 0, errors.New("failed to convert bonded tokens to big.Int")
+	}
+
+	// Loop through the validators' voting powers
+	for _, ele := range validators.Validators {
 		if ele.Status != BONDED {
 			continue
 		}
 
-		val, _ := strconv.Atoi(ele.Tokens)
+		val, err := strconv.Atoi(ele.Tokens)
+		if err != nil {
+			log.Printf("Error parsing token value for %s: %s", chainName, ele.Tokens)
+			continue
+		}
 		votingPowers = append(votingPowers, *big.NewInt(int64(val)))
 	}
 
-	// Sort the powers in descending order since they maybe in random order
+	// Summarize voting powers for logging
+	log.Printf("Voting powers for %s: %d validators with a total voting power of %s", chainName, len(votingPowers), totalVotingPower.String())
+
+	if len(votingPowers) == 0 {
+		return 0, fmt.Errorf("no valid voting powers found for %s", chainName)
+	}
+
+	// Sort the powers in descending order since they may be in random order
 	sort.Slice(votingPowers, func(i, j int) bool {
-		res := (&votingPowers[i]).Cmp(&votingPowers[j])
-		return res == 1
+		return votingPowers[i].Cmp(&votingPowers[j]) > 0
 	})
 
-	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
-	fmt.Println("Total voting power:", totalVotingPower)
-
-	// Now we're ready to calculate the nakamoto coefficient
+	// Calculate the Nakamoto coefficient
 	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
-	fmt.Printf("The Nakamoto coefficient for %s is %d\n", chainName, nakamotoCoefficient)
+	log.Printf("The Nakamoto coefficient for %s is %d", chainName, nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
-func fetch(url string) (cosmosResponse, error) {
+
+// Fetches data on active validator set
+func fetchValidatorData(url string) (cosmosValidatorData, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Println(err)
-		return cosmosResponse{}, errors.New("create get request for cosmos")
+		return cosmosValidatorData{}, errors.New("create get request for cosmos validators")
 	}
 
 	resp, err := new(http.Client).Do(req)
 	if err != nil {
 		log.Println(err)
-		return cosmosResponse{}, errors.New("get request unsuccessful for cosmos")
+		return cosmosValidatorData{}, errors.New("get request unsuccessful for cosmos validators")
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return cosmosResponse{}, err
+		return cosmosValidatorData{}, err
 	}
 
-	var response cosmosResponse
+	var response cosmosValidatorData
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return cosmosResponse{}, nil
+		return cosmosValidatorData{}, err
+	}
+
+	return response, nil
+}
+
+// Fetches staking pool data incl bonded and not_bonded tokens
+func fetchStakingPoolData(url string) (cosmosStakingPoolData, error) {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancelFunc()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Println(err)
+		return cosmosStakingPoolData{}, errors.New("create get request for cosmos pool")
+	}
+
+	resp, err := new(http.Client).Do(req)
+	if err != nil {
+		log.Println(err)
+		return cosmosStakingPoolData{}, errors.New("get request unsuccessful for cosmos pool")
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return cosmosStakingPoolData{}, err
+	}
+
+	var response cosmosStakingPoolData
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return cosmosStakingPoolData{}, err
 	}
 
 	return response, nil
