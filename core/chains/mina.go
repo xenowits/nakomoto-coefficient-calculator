@@ -38,6 +38,7 @@ func reverse(numbers []float64) {
 
 func Mina() (int, error) {
 	var votingPowers []float64
+	var totalStake float64
 	pageNo, entriesPerPage := 0, 50
 	url := ""
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
@@ -58,12 +59,12 @@ func Mina() (int, error) {
 			log.Println(err)
 			return 0, errors.New("get request unsuccessful")
 		}
+		defer resp.Body.Close()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return 0, err
 		}
-		resp.Body.Close()
 
 		var response MinaResponse
 		err = json.Unmarshal(body, &response)
@@ -71,38 +72,45 @@ func Mina() (int, error) {
 			return 0, err
 		}
 
-		// break if no more entries left
-		if len(response.Content) == 0 {
+		// Break if no content or all pages have been fetched
+		if len(response.Content) == 0 || pageNo >= response.TotalPages {
 			break
 		}
 
 		// loop through the validators voting powers
 		for _, ele := range response.Content {
 			votingPowers = append(votingPowers, ele.StakePercent)
+			// Accumulate total stake of all validators
+			totalStake += ele.StakePercent
 		}
 
 		// increment counters
 		pageNo += 1
 	}
 
-	sort.Float64s(votingPowers)
-	reverse(votingPowers)
+	// Sort voting powers in descending order
+	sort.Slice(votingPowers, func(i, j int) bool {
+		return votingPowers[i] > votingPowers[j]
+	})
 
-	// now we're ready to calculate the nakomoto coefficient
-	nakamotoCoefficient := calcNakamotoCoefficientForMina(votingPowers)
+	// now we're ready to calculate the Nakamoto coefficient
+	nakamotoCoefficient := calcNakamotoCoefficientForMina(votingPowers, totalStake)
 	fmt.Println("The Nakamoto coefficient for Mina is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
 
-func calcNakamotoCoefficientForMina(votingPowers []float64) int {
-	// Mina uses Ouroboros which uses 50% of the total voting paper. Paper link: https://eprint.iacr.org/2017/573.pdf (Page 6)
-	var cumulativePercent, thresholdPercent float64 = 0.00, 50.00
+func calcNakamotoCoefficientForMina(votingPowers []float64, totalStake float64) int {
+	// Calculate 50% threshold dynamically based on total stake
+	var cumulativePercent float64 = 0.00
+	thresholdPercent := totalStake * 0.50
 	nakamotoCoefficient := 0
+
 	for _, vpp := range votingPowers {
-		// since this is the  actual voting percentage, no need to multiply with 100
+		// since this is the actual voting percentage, no need to multiply with 100
 		cumulativePercent += vpp
 		nakamotoCoefficient += 1
+		// Check if cumulative voting power exceeds 50% of total stake
 		if cumulativePercent >= thresholdPercent {
 			break
 		}
