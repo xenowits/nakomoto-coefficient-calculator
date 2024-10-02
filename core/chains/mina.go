@@ -38,7 +38,7 @@ func reverse(numbers []float64) {
 
 func Mina() (int, error) {
 	var votingPowers []float64
-	var totalStake float64 // Added: variable to track the total stake
+	var totalStake float64
 	pageNo, entriesPerPage := 0, 50
 	url := ""
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
@@ -59,7 +59,7 @@ func Mina() (int, error) {
 			log.Println(err)
 			return 0, errors.New("get request unsuccessful")
 		}
-		defer resp.Body.Close() // Moved this line to ensure the body is always closed, even if an error occurs
+		defer resp.Body.Close()
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -72,12 +72,7 @@ func Mina() (int, error) {
 			return 0, err
 		}
 
-		// Original code:
-		// if len(response.Content) == 0 {
-		//     break
-		// }
-
-		// Updated condition: Break if no content or all pages have been fetched
+		// Break if no content or all pages have been fetched
 		if len(response.Content) == 0 || pageNo >= response.TotalPages {
 			break
 		}
@@ -85,36 +80,30 @@ func Mina() (int, error) {
 		// loop through the validators voting powers
 		for _, ele := range response.Content {
 			votingPowers = append(votingPowers, ele.StakePercent)
-			totalStake += ele.StakePercent // Added: Accumulate total stake of all validators
+			// Accumulate total stake of all validators
+			totalStake += ele.StakePercent
 		}
 
 		// increment counters
 		pageNo += 1
 	}
 
-	// Original sorting and reversal:
-	// sort.Float64s(votingPowers)
-	// reverse(votingPowers)
-
-	// Updated sorting: Sort voting powers in descending order
+	// Sort voting powers in descending order
 	sort.Slice(votingPowers, func(i, j int) bool {
 		return votingPowers[i] > votingPowers[j]
 	})
 
 	// now we're ready to calculate the Nakamoto coefficient
-	nakamotoCoefficient := calcNakamotoCoefficientForMina(votingPowers, totalStake) // Modified to pass totalStake
+	nakamotoCoefficient := calcNakamotoCoefficientForMina(votingPowers, totalStake)
 	fmt.Println("The Nakamoto coefficient for Mina is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
 }
 
-func calcNakamotoCoefficientForMina(votingPowers []float64, totalStake float64) int { // Modified to accept totalStake
-	// Original threshold calculation:
-	// var cumulativePercent, thresholdPercent float64 = 0.00, 50.00
-
-	// Updated to calculate the actual 50% threshold based on total stake
+func calcNakamotoCoefficientForMina(votingPowers []float64, totalStake float64) int {
+	// Calculate 50% threshold dynamically based on total stake
 	var cumulativePercent float64 = 0.00
-	thresholdPercent := totalStake * 0.50 // Calculate 50% threshold dynamically based on total stake
+	thresholdPercent := totalStake * 0.50
 	nakamotoCoefficient := 0
 
 	for _, vpp := range votingPowers {
