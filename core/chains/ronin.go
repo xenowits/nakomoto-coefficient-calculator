@@ -73,10 +73,7 @@ func Ronin() (int, error) {
 	// need to sort the powers in descending order since they are in random order
 	sort.Slice(totalStakes, func(i, j int) bool {
 		res := (&totalStakes[i]).Cmp(&totalStakes[j])
-		if res == 1 {
-			return true
-		}
-		return false
+		return res == 1
 	})
 
 	totalStake := utils.CalculateTotalVotingPowerBigNums(totalStakes)
