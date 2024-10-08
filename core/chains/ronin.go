@@ -10,7 +10,7 @@ import (
 	"sort"
 	"strings"
 
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
+	"github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
 )
 
 type RoninResponse []struct {
@@ -27,7 +27,7 @@ func Ronin() (int, error) {
 
 	url := fmt.Sprintf("https://indexer.roninchain.com/query")
 
-	var votingPowers []big.Int
+	var totalStakes []big.Int
 
 	// Create a new request using http
 	req, err := http.NewRequest("POST", url, strings.NewReader(RoninValidatorQuery))
@@ -67,23 +67,23 @@ func Ronin() (int, error) {
 		if !ok {
 			return 0, fmt.Errorf("failed to convert %s to big.Int", ele.TotalStaked)
 		}
-		votingPowers = append(votingPowers, *staked)
+		totalStakes = append(totalStakes, *staked)
 	}
 
 	// need to sort the powers in descending order since they are in random order
-	sort.Slice(votingPowers, func(i, j int) bool {
-		res := (&votingPowers[i]).Cmp(&votingPowers[j])
+	sort.Slice(totalStakes, func(i, j int) bool {
+		res := (&totalStakes[i]).Cmp(&totalStakes[j])
 		if res == 1 {
 			return true
 		}
 		return false
 	})
 
-	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
-	fmt.Println("Total voting power:", new(big.Float).SetInt(totalVotingPower))
+	totalStake := utils.CalculateTotalVotingPowerBigNums(totalStakes)
+	fmt.Println("Total voting power:", new(big.Float).SetInt(totalStake))
 
 	// now we're ready to calculate the nakomoto coefficient
-	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
+	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalStake, totalStakes)
 	fmt.Println("The Nakamoto coefficient for Ronin is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
