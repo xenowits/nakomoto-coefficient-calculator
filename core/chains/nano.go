@@ -32,7 +32,7 @@ func Nano() (int, error) {
 		return 0, err
 	}
 
-	// The Nakamoto coefficient is directly available in the JSON under stats.c1s.n
+	// The Nakamoto coefficient is directly available in the JSON under stats.c1s.n!
 	nakamotoCoefficient := data.Stats.C1s.N
 
 	log.Println("The Nakamoto coefficient for Nano is", nakamotoCoefficient)
