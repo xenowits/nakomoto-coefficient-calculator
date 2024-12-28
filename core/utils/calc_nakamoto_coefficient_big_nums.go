@@ -27,6 +27,9 @@ func CalcNakamotoCoefficientBigNums(totalVotingPower *big.Int, votingPowers []bi
 	return nakamotoCoefficient
 }
 
+// CalcNakamotoCoefficientBigNums51 calculates the Nakamoto Coefficient for a given voting power distribution.
+// This function is used for chains that require at least > 50% of the total voting power to be controlled,
+// that therefore cannot use the 33% threshold with the CalcNakamotoCoefficientBigNums function. 
 func CalcNakamotoCoefficientBigNums51(totalVotingPower *big.Int, votingPowers []big.Int) int {
 	thresholdPercent := big.NewFloat(0.50)
 	thresholdVal := new(big.Float).Mul(new(big.Float).SetInt(totalVotingPower), thresholdPercent)
