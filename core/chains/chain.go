@@ -106,7 +106,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
+var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
