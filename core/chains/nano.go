@@ -29,8 +29,8 @@ func Nano() (int, error) {
 	defer resp.Body.Close()
 
 	var data NanoStats
-
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
 		log.Println("Error decoding JSON:", err)
 		return 0, err
 	}
