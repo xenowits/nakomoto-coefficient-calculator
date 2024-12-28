@@ -6,6 +6,15 @@ import (
 	"net/http"
 )
 
+// NanoStats represents the structure for Nano's stats data from nanocharts.
+type NanoStats struct {
+	Stats struct {
+		C1s struct {
+			N int `json:"n"`
+		} `json:"c1s"`
+	} `json:"stats"`
+}
+
 func Nano() (int, error) {
 	chartsURL := "https://nanocharts.info/data/nanocharts.json"
 
@@ -19,13 +28,7 @@ func Nano() (int, error) {
 	}
 	defer resp.Body.Close()
 
-	var data struct {
-		Stats struct {
-			C1s struct {
-				N int `json:"n"`
-			} `json:"c1s"`
-		} `json:"stats"`
-	}
+	var data NanoStats
 
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		log.Println("Error decoding JSON:", err)
