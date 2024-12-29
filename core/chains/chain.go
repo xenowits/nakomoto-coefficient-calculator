@@ -39,6 +39,7 @@ const (
 	OSMO  Token = "OSMO"
 	PLS   Token = "PLS"
 	REGEN Token = "REGEN"
+	RONIN Token = "RONIN"
 	RUNE  Token = "RUNE"
 	SEI   Token = "SEI"
 	SOL   Token = "SOL"
@@ -86,6 +87,8 @@ func (t Token) ChainName() string {
 		return "Pulsechain"
 	case REGEN:
 		return "Regen Network"
+	case RONIN:
+		return "Ronin Chain"
 	case RUNE:
 		return "Thorchain"
 	case SEI:
@@ -103,7 +106,9 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA}
+
+var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RONIN, RUNE, SEI, SOL, STARS, SUI, TIA}
+
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -175,6 +180,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Pulsechain()
 	case REGEN:
 		currVal, err = Regen()
+	case RONIN:
+		currVal, err = Ronin()
 	case RUNE:
 		currVal, err = Thorchain()
 	case SEI:
