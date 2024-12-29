@@ -21,6 +21,7 @@ type ChainState map[Token]Chain
 
 // Append new chains in alphabetical order only.
 const (
+	ADA   Token = "ADA"
 	ALGO  Token = "ALGO"
 	APT   Token = "APT"
 	ATOM  Token = "ATOM"
@@ -50,6 +51,8 @@ const (
 // ChainName returns the name of the chain given the token name.
 func (t Token) ChainName() string {
 	switch t {
+	case ADA:
+		return "Cardano"
 	case ALGO:
 		return "Algo"
 	case APT:
@@ -103,7 +106,9 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RONIN, RUNE, SEI, SOL, STARS, SUI, TIA}
+
+var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RONIN, RUNE, SEI, SOL, STARS, SUI, TIA}
+
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -139,6 +144,8 @@ func newValues(token Token) (int, error) {
 	log.Printf("Calculating Nakamoto coefficient for %s", token.ChainName())
 
 	switch token {
+	case ADA:
+		currVal, err = Cardano()
 	case ALGO:
 		currVal, err = Algorand()
 	case APT:
