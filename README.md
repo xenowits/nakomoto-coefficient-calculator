@@ -16,6 +16,7 @@ we simply calculate:
 nakamoto-coefficient: no of validators controlling 33% of the total network stake
 ```
 
+Note that the threshold may be different for some blockchains, for example, 50%.
 So, I would suggest users to understand the context, cross-verify and examine the results. For any feedback, please join this [discord](https://discord.gg/Una8qmFg).
 
 ### Programming Languages
@@ -39,30 +40,31 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 
 ### Chains currently supported
 
-1. [Cosmos](https://cosmos.network/)
-2. [Polygon](https://polygon.technology/)
-3. [BNB Smart Chain](https://www.bnbchain.org)
-4. [Osmosis Zone](https://osmosis.zone/)
-5. [Mina](https://minaprotocol.com/)
-6. [Solana](https://solana.com/)
-7. [Avalanche](https://www.avax.network/)
-8. [Terra](https://www.terra.money/)
-9. [Graph Protocol](https://thegraph.com/)
-10. [Thorchain](https://www.thorchain.com/)
-11. [Near](https://near.org/)
-12. [Juno](https://www.junonetwork.io/)
-13. [Regen Network](https://www.regen.network/)
-14. [Agoric](https://agoric.com/)
-15. [Stargaze](https://stargaze.zone/)
-16. [Hedera](https://hedera.com/)
-17. [Sui](https://sui.io/)
-18. [Pulsechain](https://pulsechain.com/)
-19. [Celestia](https://celestia.org/)
-20. [MultiversX](https://multiversx.com/)
-21. [Polkadot](https://polkadot.network/)
-22. [Aptos](https://aptosfoundation.org/)
-23. [Sei](https://sei.io/)
-24. [Nano](https://nano.org/)
+1. [Agoric](https://agoric.com/)
+2. [Aptos](https://aptosfoundation.org/)
+3. [Avalanche](https://www.avax.network/)
+4. [BNB Smart Chain](https://www.bnbchain.org)
+5. [Cardano](https://cardano.org/)
+6. [Celestia](https://celestia.org/)
+7. [Cosmos](https://cosmos.network/)
+8. [Graph Protocol](https://thegraph.com/)
+9. [Hedera](https://hedera.com/)
+10. [Juno](https://www.junonetwork.io/)
+11. [Mina](https://minaprotocol.com/)
+12. [MultiversX](https://multiversx.com/)
+13. [Near](https://near.org/)
+14. [Osmosis Zone](https://osmosis.zone/)
+15. [Polygon](https://polygon.technology/)
+16. [Polkadot](https://polkadot.network/)
+17. [Pulsechain](https://pulsechain.com/)
+18. [Regen Network](https://www.regen.network/)
+19. [Sei](https://sei.io/)
+20. [Solana](https://solana.com/)
+21. [Stargaze](https://stargaze.zone/)
+22. [Sui](https://sui.io/)
+23. [Terra](https://www.terra.money/)
+24. [Thorchain](https://www.thorchain.com/)
+25. [Nano](https://nano.org/)
 
 ### Notes
 
