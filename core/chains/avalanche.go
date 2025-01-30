@@ -5,13 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math/big"
 	"net/http"
 	"sort"
-	"strconv"
-
-	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
+	"strings"
 )
 
 type AvalancheResponse struct {
@@ -19,76 +16,102 @@ type AvalancheResponse struct {
 	Id      int    `json:"id"`
 	Result  struct {
 		Validators []struct {
-			StakeAmount string `json:"stakeAmount"`
-			NodeId      string `json:"nodeID"`
+			Weight string `json:"weight"` // Correct field for stake amount
 		} `json:"validators"`
 	} `json:"result"`
 }
 
-type AvalancheErrorResponse struct {
-	Id      int    `json:"id"`
-	Jsonrpc string `json:"jsonrpc"`
-	Error   string `json:"error"`
-}
-
-// Avalanche calculates nakamoto coefficient for the `Avalanche` C-Chain
-// In AVAX, stake amounts are already multiplied by 10^9
-// So, we need to deal with big numbers here.
-// Else, if we divide each value with 10^9, we have to deal with fractional numbers which is worse.
+// Avalanche calculates the Nakamoto coefficient for Avalanche C-Chain.
 func Avalanche() (int, error) {
-	votingPowers := make([]big.Int, 0)
+	var votingPowers []*big.Int
 
-	url := fmt.Sprintf("https://api.avax.network/ext/P")
+	url := "https://api.avax.network/ext/P"
 	jsonReqData := []byte(`{"jsonrpc": "2.0","method": "platform.getCurrentValidators","params":{},"id":1}`)
 
-	// Create a new POST request using http
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonReqData))
+	if err != nil {
+		return 0, fmt.Errorf("failed to create request: %v", err)
+	}
 	req.Header.Set("Content-Type", "application/json")
 
-	// Send request using http Client
 	client := &http.Client{}
 	resp, err := client.Do(req)
-
 	if err != nil {
-		errBody, _ := ioutil.ReadAll(resp.Body)
-		var errResp AvalancheErrorResponse
-		json.Unmarshal(errBody, &errResp)
-		log.Println(errResp.Error)
-		return 0, err
+		return 0, fmt.Errorf("failed to make request: %v", err)
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		return 0, fmt.Errorf("API request failed with status code %d", resp.StatusCode)
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to read response body: %v", err)
 	}
 
 	var response AvalancheResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to parse JSON response: %v", err)
 	}
 
-	// loop through the validators voting powers
-	for _, ele := range response.Result.Validators {
-		val, _ := strconv.Atoi(ele.StakeAmount)
-		votingPowers = append(votingPowers, *big.NewInt(int64(val)))
+	if len(response.Result.Validators) == 0 {
+		return 0, fmt.Errorf("no validators found in API response")
 	}
 
-	// need to sort the powers in descending order since they are in random order
-	sort.Slice(votingPowers, func(i, j int) bool {
-		res := (&votingPowers[i]).Cmp(&votingPowers[j])
-		if res == 1 {
-			return true
+	// Parse stake amounts from "weight" field and compute total voting power
+	totalVotingPower := big.NewInt(0)
+	for _, v := range response.Result.Validators {
+		if v.Weight == "" {
+			continue
 		}
-		return false
+
+		// Convert weight string to big.Int
+		stake := new(big.Int)
+		if strings.Contains(v.Weight, "e") || strings.Contains(v.Weight, "E") {
+			stakeFloat := new(big.Float)
+			_, success := stakeFloat.SetString(v.Weight)
+			if !success {
+				continue
+			}
+			stakeFloat.Int(stake)
+		} else {
+			_, success := stake.SetString(v.Weight, 10) // Base 10 conversion
+			if !success {
+				continue
+			}
+		}
+
+		votingPowers = append(votingPowers, stake)
+		totalVotingPower.Add(totalVotingPower, stake)
+	}
+
+	if totalVotingPower.Cmp(big.NewInt(0)) == 0 {
+		return 0, fmt.Errorf("total voting power is still 0, check API response")
+	}
+
+	// Sort voting powers in descending order
+	sort.Slice(votingPowers, func(i, j int) bool {
+		return votingPowers[i].Cmp(votingPowers[j]) > 0
 	})
 
-	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
-	fmt.Println("Total voting power:", totalVotingPower)
+	// Calculate Nakamoto coefficient (top n validators > 33% of stake)
+	threshold := new(big.Int).Div(new(big.Int).Mul(totalVotingPower, big.NewInt(33)), big.NewInt(100)) // 33% of total stake
+	accumulatedPower := big.NewInt(0)
+	nakamotoCoefficient := 0
 
-	// // now we're ready to calculate the nakomoto coefficient
-	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowers)
+	for _, power := range votingPowers {
+		accumulatedPower.Add(accumulatedPower, power)
+		nakamotoCoefficient++
+
+		if accumulatedPower.Cmp(threshold) >= 0 {
+			break
+		}
+	}
+
+	// Final result output
+	fmt.Println("Total voting power:", totalVotingPower)
 	fmt.Println("The Nakamoto coefficient for Avalanche is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
