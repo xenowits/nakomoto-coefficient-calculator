@@ -33,6 +33,7 @@ const (
 	GRT   Token = "GRT"
 	HBAR  Token = "HBAR"
 	JUNO  Token = "JUNO"
+	KSM   Token = "KSM"
 	MATIC Token = "MATIC"
 	MINA  Token = "MINA"
 	NEAR  Token = "NEAR"
@@ -75,6 +76,8 @@ func (t Token) ChainName() string {
 		return "Hedera"
 	case JUNO:
 		return "Juno"
+	case KSM:
+		return "Kusama"
 	case MATIC:
 		return "Polygon"
 	case MINA:
@@ -106,7 +109,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
+var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, KSM, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -158,6 +161,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = BSC()
 	case DOT:
 		currVal, err = Polkadot()
+	case KSM:
+		currVal, err = Kusama()
 	case EGLD:
 		currVal, err = MultiversX()
 	case GRT:

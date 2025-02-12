@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/xenowits/nakamoto-coefficient-calculator/core/chains"
 	"log"
 	"sort"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/xenowits/nakamoto-coefficient-calculator/core/chains"
 )
 
 type JsonResponse struct {
