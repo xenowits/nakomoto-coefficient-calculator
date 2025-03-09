@@ -6,24 +6,20 @@ import (
 	"net/http"
 )
 
-// NanoStats represents the structure for Nano's stats data from nanocharts.
+// NanoStats represents the structure for Nano's stats data from nanonakamoto.xyz.
 type NanoStats struct {
-	Stats struct {
-		C1s struct {
-			N int `json:"n"`
-		} `json:"c1s"`
-	} `json:"stats"`
+     NakamotoCoefficient int `json:"nakamotoCoefficient"`
 }
 
 func Nano() (int, error) {
-	chartsURL := "https://nanocharts.info/data/nanocharts.json"
+	chartsURL := "https://nanonakamoto.xyz/api/nc"
 
 	log.Println("Fetching data for Nano")
 
 	// Fetch the data from nanocharts
 	resp, err := http.Get(chartsURL)
 	if err != nil {
-		log.Println("Error fetching data from nanocharts:", err)
+		log.Println("Error fetching data from nanonakamoto.xyz:", err)
 		return 0, err
 	}
 	defer resp.Body.Close()
@@ -35,8 +31,8 @@ func Nano() (int, error) {
 		return 0, err
 	}
 
-	// The Nakamoto coefficient is directly available in the JSON under stats.c1s.n!
-	nakamotoCoefficient := data.Stats.C1s.N
+	// The Nakamoto coefficient is directly available in the JSON!
+	nakamotoCoefficient := data.NakamotoCoefficient
 
 	log.Println("The Nakamoto coefficient for Nano is", nakamotoCoefficient)
 
