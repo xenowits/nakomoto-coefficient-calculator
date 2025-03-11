@@ -121,7 +121,7 @@ func Nano() (int, error) {
 
 	// Calculate total voting power
 	calculatedTotalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowers)
-	thresholdVotingPower := new(big.Int).Mul(calculatedTotalVotingPower, big.NewInt(67))
+	thresholdVotingPower := new(big.Int).Mul(calculatedTotalVotingPower, big.NewInt(THRESHOLD))
 	thresholdVotingPower.Div(thresholdVotingPower, big.NewInt(100))
 
 	// Sort the voting powers in descending order
