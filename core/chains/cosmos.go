@@ -46,7 +46,7 @@ type cosmosStakingPoolData struct {
 	} `json:"pool"`
 }
 
-// fetchCosmosSDKNakaCoeff returns the nakamoto coefficient for a given cosmos SDK-based chain through REST API.
+// FetchCosmosSDKNakaCoeff returns the nakamoto coefficient for a given cosmos SDK-based chain through REST API.
 func FetchCosmosSDKNakaCoeff(chainName, validatorURL, poolURL string) (int, error) {
 	var (
 		votingPowers []big.Int
