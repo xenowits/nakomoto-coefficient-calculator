@@ -108,8 +108,6 @@ func Nano() (int, error) {
 	for _, weight := range weights {
 		// Copy the value of weight to the slice of big.Int
 		votingPowers = append(votingPowers, *weight)
-
-		// log.Printf("Entity: %s, Weight: %s XNO", weight.String(), weight.String())
 	}
 
 	if len(votingPowers) == 0 {
