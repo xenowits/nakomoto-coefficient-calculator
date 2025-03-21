@@ -25,6 +25,7 @@ const (
 	ALGO  Token = "ALGO"
 	APT   Token = "APT"
 	ATOM  Token = "ATOM"
+	AVAIL Token = "AVAIL"
 	AVAX  Token = "AVAX"
 	BLD   Token = "BLD"
 	BNB   Token = "BNB"
@@ -59,6 +60,8 @@ func (t Token) ChainName() string {
 		return "Aptos"
 	case ATOM:
 		return "Cosmos"
+	case AVAIL:
+		return "Avail DA"
 	case AVAX:
 		return "Avalanche"
 	case BLD:
@@ -106,7 +109,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
+var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAIL, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -150,6 +153,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Aptos()
 	case ATOM:
 		currVal, err = Cosmos()
+	case AVAIL:
+		currVal, err = Avail()
 	case AVAX:
 		currVal, err = Avalanche()
 	case BLD:
