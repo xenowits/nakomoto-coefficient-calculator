@@ -66,6 +66,7 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 24. [Sui](https://sui.io/)
 25. [Terra](https://www.terra.money/)
 26. [Thorchain](https://www.thorchain.com/)
+27. [Vara Network](https://vara.network/)
 
 ### Notes
 
