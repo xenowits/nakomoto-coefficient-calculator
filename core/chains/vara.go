@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/big"
 	"net/http"
 	"sort"
-	"strconv"
 	"time"
 
 	utils "github.com/xenowits/nakamoto-coefficient-calculator/core/utils"
@@ -25,7 +25,7 @@ type VaraResponse struct {
 }
 
 func Vara() (int, error) {
-	var votingPowers []int64
+	var votingPowers []*big.Int
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelFunc()
 
@@ -55,28 +55,45 @@ func Vara() (int, error) {
 	var response VaraResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
+		log.Printf("Error unmarshalling Vara response: %v", err)
 		return 0, err
 	}
 
-	// Loop through the validators bonded amounts
 	for _, ele := range response.Data.List {
-		bondedTotal, err := strconv.ParseInt(ele.BondedTotal, 10, 64)
-		if err != nil {
-			log.Println(err)
+		bondedTotal := new(big.Int)
+		_, success := bondedTotal.SetString(ele.BondedTotal, 10)
+		if !success {
+			log.Printf("Error parsing BondedTotal '%s' into big.Int", ele.BondedTotal)
 			continue
 		}
-		
+
 		votingPowers = append(votingPowers, bondedTotal)
 	}
 
-	// Sort the voting powers in descending order since they maybe in random order.
-	sort.Slice(votingPowers, func(i, j int) bool { return votingPowers[i] > votingPowers[j] })
+	// Sort the voting powers (slice of *big.Int) in descending order.
+	sort.Slice(votingPowers, func(i, j int) bool {
+		// Compare returns -1 if votingPowers[i] < votingPowers[j],
+		// 0 if votingPowers[i] == votingPowers[j],
+		// +1 if votingPowers[i] > votingPowers[j].
+		// We want descending order, so return true if votingPowers[i] > votingPowers[j].
+		return votingPowers[i].Cmp(votingPowers[j]) == 1
+	})
 
-	totalVotingPower := utils.CalculateTotalVotingPower(votingPowers)
-	fmt.Println("Total voting power:", totalVotingPower)
+	// Convert []*big.Int to []big.Int for utility functions
+	votingPowersValues := make([]big.Int, len(votingPowers))
+	for i, ptr := range votingPowers {
+		if ptr != nil {
+			votingPowersValues[i] = *ptr
+		} else {
+			votingPowersValues[i] = *big.NewInt(0)
+			log.Printf("Warning: Found nil big.Int pointer at index %d in Vara votingPowers", i)
+		}
+	}
 
-	// Now we're ready to calculate the nakamoto coefficient
-	nakamotoCoefficient := utils.CalcNakamotoCoefficient(totalVotingPower, votingPowers)
+	totalVotingPower := utils.CalculateTotalVotingPowerBigNums(votingPowersValues)
+	fmt.Println("Total voting power (Vara):", totalVotingPower.String())
+
+	nakamotoCoefficient := utils.CalcNakamotoCoefficientBigNums(totalVotingPower, votingPowersValues)
 	fmt.Println("The Nakamoto coefficient for Vara Network is", nakamotoCoefficient)
 
 	return nakamotoCoefficient, nil
