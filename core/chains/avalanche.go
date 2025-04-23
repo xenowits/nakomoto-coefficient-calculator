@@ -8,7 +8,6 @@ import (
 	"math/big"
 	"net/http"
 	"sort"
-	_ "strings"
 )
 
 type AvalancheResponse struct {
