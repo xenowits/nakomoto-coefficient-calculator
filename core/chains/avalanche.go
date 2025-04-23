@@ -61,23 +61,23 @@ func Avalanche() (int, error) {
 
 	// Parse stake amounts from "weight" field and compute total voting power
 	totalVotingPower := big.NewInt(0)
-for _, v := range response.Result.Validators {
-	if v.Weight == "" {
-		continue
+	for _, v := range response.Result.Validators {
+		if v.Weight == "" {
+			continue
+		}
+
+		stake := new(big.Int)
+		stakeFloat := new(big.Float)
+
+		if _, success := stakeFloat.SetString(v.Weight); success {
+			stakeFloat.Int(stake)
+		} else if _, success := stake.SetString(v.Weight, 10); !success {
+			continue
+		}
+
+		votingPowers = append(votingPowers, stake)
+		totalVotingPower.Add(totalVotingPower, stake)
 	}
-
-	stake := new(big.Int)
-	stakeFloat := new(big.Float)
-
-	if _, success := stakeFloat.SetString(v.Weight); success {
-		stakeFloat.Int(stake)
-	} else if _, success := stake.SetString(v.Weight, 10); !success {
-		continue
-	}
-
-	votingPowers = append(votingPowers, stake)
-	totalVotingPower.Add(totalVotingPower, stake)
-}
 
 	if totalVotingPower.Cmp(big.NewInt(0)) == 0 {
 		return 0, fmt.Errorf("total voting power is still 0, check API response")
