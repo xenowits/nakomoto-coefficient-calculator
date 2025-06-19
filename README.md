@@ -65,7 +65,8 @@ NOTE: You can get your API Key by signing up [here](https://www.validators.app/u
 23. [Stargaze](https://stargaze.zone/)
 24. [Sui](https://sui.io/)
 25. [Terra](https://www.terra.money/)
-26. [Thorchain](https://www.thorchain.com/)
+26. [Tezos](https://tezos.com/)
+27. [Thorchain](https://www.thorchain.com/)
 
 ### Notes
 
