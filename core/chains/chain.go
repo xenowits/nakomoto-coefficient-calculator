@@ -47,6 +47,7 @@ const (
 	SUI   Token = "SUI"
 	TIA   Token = "TIA"
 	XNO   Token = "XNO"
+	NAM   Token = "NAM"
 )
 
 // ChainName returns the name of the chain given the token name.
@@ -104,12 +105,14 @@ func (t Token) ChainName() string {
 		return "Celestia"
 	case XNO:
 		return "Nano"
+	case NAM:
+		return "Namada"
 	default:
 		return "Unknown"
 	}
 }
 
-var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAIL, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
+var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAIL, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NAM, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -205,6 +208,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Celestia()
 	case XNO:
 		currVal, err = Nano()
+	case NAM:
+		currVal, err = Namada()
 	default:
 		return 0, fmt.Errorf("chain not found: %s", token)
 	}
