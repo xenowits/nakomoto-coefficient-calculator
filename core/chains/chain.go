@@ -37,6 +37,7 @@ const (
 	MATIC Token = "MATIC"
 	MINA  Token = "MINA"
 	NEAR  Token = "NEAR"
+	NAM   TOKEN = "NAM"
 	OSMO  Token = "OSMO"
 	PLS   Token = "PLS"
 	REGEN Token = "REGEN"
@@ -47,7 +48,6 @@ const (
 	SUI   Token = "SUI"
 	TIA   Token = "TIA"
 	XNO   Token = "XNO"
-	NAM   Token = "NAM"
 )
 
 // ChainName returns the name of the chain given the token name.
@@ -83,6 +83,8 @@ func (t Token) ChainName() string {
 		return "Polygon"
 	case MINA:
 		return "Mina Protocol"
+        case NAM:
+                return "Namada"
 	case NEAR:
 		return "Near Protocol"
 	case OSMO:
@@ -105,8 +107,6 @@ func (t Token) ChainName() string {
 		return "Celestia"
 	case XNO:
 		return "Nano"
-	case NAM:
-		return "Namada"
 	default:
 		return "Unknown"
 	}
