@@ -36,8 +36,8 @@ const (
 	JUNO  Token = "JUNO"
 	MATIC Token = "MATIC"
 	MINA  Token = "MINA"
+	NAM   Token = "NAM"
 	NEAR  Token = "NEAR"
-	NAM   TOKEN = "NAM"
 	OSMO  Token = "OSMO"
 	PLS   Token = "PLS"
 	REGEN Token = "REGEN"
@@ -83,8 +83,8 @@ func (t Token) ChainName() string {
 		return "Polygon"
 	case MINA:
 		return "Mina Protocol"
-        case NAM:
-                return "Namada"
+	case NAM:
+		return "Namada"
 	case NEAR:
 		return "Near Protocol"
 	case OSMO:
@@ -178,6 +178,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Polygon()
 	case MINA:
 		currVal, err = Mina()
+	case NAM:
+		currVal, err = Namada()
 	case NEAR:
 		currVal, err = Near()
 	case OSMO:
@@ -208,8 +210,6 @@ func newValues(token Token) (int, error) {
 		currVal, err = Celestia()
 	case XNO:
 		currVal, err = Nano()
-	case NAM:
-		currVal, err = Namada()
 	default:
 		return 0, fmt.Errorf("chain not found: %s", token)
 	}
