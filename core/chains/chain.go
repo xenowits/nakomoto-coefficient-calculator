@@ -36,6 +36,7 @@ const (
 	JUNO  Token = "JUNO"
 	MATIC Token = "MATIC"
 	MINA  Token = "MINA"
+	NAM   Token = "NAM"
 	NEAR  Token = "NEAR"
 	OSMO  Token = "OSMO"
 	PLS   Token = "PLS"
@@ -82,6 +83,8 @@ func (t Token) ChainName() string {
 		return "Polygon"
 	case MINA:
 		return "Mina Protocol"
+	case NAM:
+		return "Namada"
 	case NEAR:
 		return "Near Protocol"
 	case OSMO:
@@ -109,7 +112,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAIL, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
+var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAIL, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, NAM, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -175,6 +178,8 @@ func newValues(token Token) (int, error) {
 		currVal, err = Polygon()
 	case MINA:
 		currVal, err = Mina()
+	case NAM:
+		currVal, err = Namada()
 	case NEAR:
 		currVal, err = Near()
 	case OSMO:
