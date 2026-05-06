@@ -36,8 +36,9 @@ const (
 	JUNO  Token = "JUNO"
 	MATIC Token = "MATIC"
 	MINA  Token = "MINA"
-	MON	  Token = "MON"
+	MON   Token = "MON"
 	NAM   Token = "NAM"
+	NIM   Token = "NIM"
 	NEAR  Token = "NEAR"
 	OSMO  Token = "OSMO"
 	PLS   Token = "PLS"
@@ -88,6 +89,8 @@ func (t Token) ChainName() string {
 		return "Monad"
 	case NAM:
 		return "Namada"
+	case NIM:
+		return "Nimiq"
 	case NEAR:
 		return "Near Protocol"
 	case OSMO:
@@ -115,7 +118,7 @@ func (t Token) ChainName() string {
 	}
 }
 
-var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAIL, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, MON, NAM, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
+var Tokens = []Token{ADA, ALGO, APT, ATOM, AVAIL, AVAX, BLD, BNB, DOT, EGLD, GRT, HBAR, JUNO, MATIC, MINA, MON, NAM, NIM, NEAR, OSMO, PLS, REGEN, RUNE, SEI, SOL, STARS, SUI, TIA, XNO}
 
 // NewState returns a new fresh state.
 func NewState() ChainState {
@@ -189,6 +192,8 @@ func newValues(token Token) (int, error) {
 		}
 	case NAM:
 		currVal, err = Namada()
+	case NIM:
+		currVal, err = Nimiq()
 	case NEAR:
 		currVal, err = Near()
 	case OSMO:
