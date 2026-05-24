@@ -51,6 +51,7 @@ func Monad() (int, error) {
 
 	// 2. Fetch stake for each validator
 	for _, id := range valIDs {
+		time.Sleep(50 * time.Millisecond)
 		stake, err := fetchValidatorStake(id)
 		if err != nil {
 			log.Printf("Failed to fetch stake for ValID %s: %v", id.String(), err)
